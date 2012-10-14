@@ -29,7 +29,7 @@ class PyDayHandler(webapp.RequestHandler):
         result = {}
         user = users.get_current_user()
         is_profile = False
-        imdb.get_show_info('dexter')
+        imdb.get_show_info('two and a half men')
         #if user is None:
             #session = get_current_session()
             #twitter_user = session.get("twitter_user")
