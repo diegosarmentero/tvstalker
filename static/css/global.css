@@ -384,7 +384,7 @@ border-bottom-color: #999;
     margin-right: 5px;
 }
 .thumbnails-vertical .thumbnail{
-	height:170px;
+	height:300px;
 }
 .thumbnails-vertical .thumbnail > img {
 	margin:5px;

@@ -4,6 +4,7 @@ import os
 
 from BeautifulSoup import BeautifulSoup
 
+from db import model
 import browser
 
 
@@ -53,11 +54,15 @@ class Imdb(object):
         div = soup.find('div', id="title-overview-widget")
         self.data['image_link'] = div.find('img')['src']
         self.data['description'] = div.find('p', itemprop='description').text
-        self.title = self.title.title()
-        #self._download_image()
-        #self._load_calendar(link)
+        serie = model.Serie()
+        serie.name = self.title
+        serie.title = self.title.title()
+        serie.description = self.data['description']
+        serie.store_image(self.data['image_link'])
+        serie.put()
+        self._load_calendar(serie, link)
 
-    def _load_calendar(self, link):
+    def _load_calendar(self, serie, link):
         episodes_link = link + 'episodes'
         page = self._browser.open(episodes_link)
         content = page.read()
@@ -67,15 +72,38 @@ class Imdb(object):
         seasons = [int(i.text) for i in values]
         self.data['seasons'] = seasons
 
-        self._parse_season(seasons[-1], content)
-        for season in seasons[:-1]:
-            page = self._browser.open(episodes_link)
-            content = page.read()
-            self._parse_season(season, content)
+        # Update last season
+        serie.last_season = seasons[-1]
+        serie.put()
+        # Obtain Seasons
+        season = model.Season()
+        season.nro = seasons[-1]
+        season.put()
+        self._parse_season(season, content)
+        # This produce a timeout, maybe could be completed on demand
+        #for season_nro in seasons[:-1]:
+            #epi_link = episodes_link + '?season=%s' % season_nro
+            #page = self._browser.open(epi_link)
+            #content = page.read()
+            #season = model.Season()
+            #season.nro = season_nro
+            #season.put()
+            #self._parse_season(season, content)
 
-    def _parse_season(self, nro, content):
+    def _parse_season(self, season, content):
         soup = BeautifulSoup(content)
+        divs = soup.findAll('div', id='episodes')
+        for div in divs:
+            airdate = div.find('div', {'class': 'airdate'}).text
+            title = div.find('a', itemprop='name').text
+            description = div.find('a', itemprop='description').text
+            episode = model.Episode()
+            episode.title = title
+            episode.description = description
+            real_date = self._obtain_airdate(airdate)
+            episode.airdate = real_date
+            episode.season = season
+            episode.put()
 
-    def _download_image(self):
-        img = self._browser.open(self.data['image_link']).read()
-        # store img
+    def _obtain_airdate(self, airdate):
+        pass

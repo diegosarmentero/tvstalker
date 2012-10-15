@@ -1,12 +1,14 @@
 # -*- coding: utf-8 *-*
 import os
-import cgi
 
-from google.appengine.ext.webapp import template
 from google.appengine.api import users
+from google.appengine.api import files
+from google.appengine.api import images
 from google.appengine.ext import webapp
+from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
 
+from db import db
 import imdb
 
 
@@ -27,9 +29,9 @@ class PyDayHandler(webapp.RequestHandler):
 
     def user_login(self):
         result = {}
-        user = users.get_current_user()
-        is_profile = False
-        imdb.get_show_info('two and a half men')
+        #user = users.get_current_user()
+        #is_profile = False
+        #imdb.get_show_info('dexter')
         #if user is None:
             #session = get_current_session()
             #twitter_user = session.get("twitter_user")
@@ -68,7 +70,7 @@ class PyDayHandler(webapp.RequestHandler):
 
 class NotFoundPageHandler(PyDayHandler):
     def get(self):
-        result = self.user_login()
+        #result = self.user_login()
         path = os.path.join(os.path.dirname(__file__),
             "templates/page404.html")
         #result['title'] = 'Error 404'
@@ -80,6 +82,10 @@ class MainPage(PyDayHandler):
     def get(self):
         result = self.user_login()
         path = os.path.join(os.path.dirname(__file__), "templates/index.html")
+        serie = db.get_tv_show('dexter')
+        url = images.get_serving_url(files.blobstore.get_blob_key(
+            serie.image_name))
+        result['image_key'] = url
         self.response.out.write(template.render(path, result))
 
 
