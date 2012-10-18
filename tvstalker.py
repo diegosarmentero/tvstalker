@@ -8,7 +8,10 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
 
-from db import db
+from db import (
+    db,
+    model,
+)
 import imdb
 
 
@@ -30,7 +33,10 @@ class TvStalkerHandler(webapp.RequestHandler):
     def user_login(self):
         result = {}
         user = users.get_current_user()
-        result['user'] = user
+        if user is not None:
+            login = model.StalkerLogin(user)
+        else:
+            login = None
         #is_profile = False
         #imdb.get_show_info('dexter')
         #if user is None:
@@ -45,11 +51,14 @@ class TvStalkerHandler(webapp.RequestHandler):
             #if is_profile:
                 #result['logout'] = '/oauth/signout'
             #else:
-                #result['logout'] = users.create_logout_url(self.request.uri)
             #result['username'] = user.nickname()
         #else:  # let user choose authenticator
             #result['user'] = None
             #result['login'] = '/login'
+        result['user'] = login
+        if login is not None:
+            result['nick'] = result['user'].nickname()
+            result['logout'] = users.create_logout_url(self.request.uri)
 
         return result
 
@@ -60,6 +69,11 @@ class TvStalkerHandler(webapp.RequestHandler):
             "templates/login.html")
         self.response.out.write(template.render(path, data))
 
+    def go_to_home(self, data):
+        path = os.path.join(os.path.dirname(__file__),
+            "templates/index.html")
+        self.response.out.write(template.render(path, data))
+
 
 class NotFoundPageHandler(TvStalkerHandler):
     def get(self):
@@ -68,24 +82,57 @@ class NotFoundPageHandler(TvStalkerHandler):
         self.response.out.write(template.render(path, {}))
 
 
-class MainPage(TvStalkerHandler):
+class ProfilePage(TvStalkerHandler):
     def get(self):
         result = self.user_login()
         if result['user'] is None:
             self.go_to_login(result)
         else:
             path = os.path.join(os.path.dirname(__file__),
-                "templates/index.html")
-            serie = db.get_tv_show('dexter')
+                "templates/profile.html")
+            self.response.out.write(template.render(path, result))
+
+
+class SettingsPage(TvStalkerHandler):
+    def get(self):
+        result = self.user_login()
+        if result['user'] is None:
+            self.go_to_login(result)
+        else:
+            path = os.path.join(os.path.dirname(__file__),
+                "templates/setting.html")
+            self.response.out.write(template.render(path, result))
+
+
+class SignUpPage(TvStalkerHandler):
+    def get(self):
+        result = self.user_login()
+        if result['user'] is not None:
+            self.go_to_home(result)
+        else:
+            path = os.path.join(os.path.dirname(__file__),
+                "templates/sign-up.html")
+            self.response.out.write(template.render(path, {}))
+
+
+class MainPage(TvStalkerHandler):
+    def get(self):
+        result = self.user_login()
+        if result['user'] is None:
+            self.go_to_login(result)
+        else:
+            self.go_to_home(result)
             #url = images.get_serving_url(files.blobstore.get_blob_key(
                 #serie.image_name))
             #result['image_key'] = url
-            self.response.out.write(template.render(path, result))
 
 
 def main():
     application = webapp.WSGIApplication([
         ('/', MainPage),
+        ('/SignUp', SignUpPage),
+        ('/profile', ProfilePage),
+        ('/settings', SettingsPage),
         ('/.*', NotFoundPageHandler),
         ], debug=True)
     run_wsgi_app(application)

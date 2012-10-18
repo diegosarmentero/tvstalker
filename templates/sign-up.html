@@ -1,44 +1,90 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>login</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
-	<link type="text/css" rel="stylesheet" href="assets/css/global.css" />
-	<link type="text/css" rel="stylesheet" href="assets/css/color-button.css" />
-	<!-- js Boots_from -->
-	<script src="assets/js/jquery.js"></script>
-    <script src="assets/js/bootstrap.min.js"></script>
-    <script src="assets/js/custom.js"></script>
-	
-	<!-- end Boots_from -->
-</head>
+{% extends "base/base.html" %}
 
-<body data-spy="scroll" data-target=".subnav" data-offset="50" data-twttr-rendered="true">
-<div class="wrapper-login">
-	<div class="container">
-		<div class="row">
-			<div class="login-content span4 offset4">
-				<div class="header-login well">
-					<h3>Sign up</h3>
-				</div>
-				<form class="well">
-					<label>Email</label>
-					<input type="text" class="input" placeholder="Type something…">
-					<label>Username</label>
-					<input type="text" class="input" placeholder="Type something…">
-					<label>Password</label>
-					<input type="text" class="input" placeholder="Type something…">
+{% block content %}
 
-					
-				  	<a href="index.html" type="submit" class="btn btn-info">Submit</a>
-				  	
-				</form>	
-			</div>
-		<div>
-	</div>
-</div>
-</body>
-</html>
+<script src="static/js/jquery.rs.slideshow.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#slideshow-div').rsfSlideshow();
+    });
+</script>
+
+<div class="main">
+    <div class="container">
+        <div class="row row-login">
+            <div class="widget">
+                    <div class="widget-content">
+                        <div class="hero-unit hero-unit2">
+                          <h1>Tv Stalker</h1>
+                          <p>All the information about your favorite Tv Shows in one place.</p>
+                        </div>
+                    </div>
+                </div>
+            <div class="span3 sidebar_content">
+                <div class="row">
+                    <div class="span3 user_info">
+                        <div id="slideshow-div" class="rs-slideshow">
+                                <!--
+                                Set up an initial slide -- this provides an image for users without JavaScript
+                                -->
+                                <div class="slide-container">
+                                    <img src="static/img/shows/01.jpg"/>
+                                </div>
+                                <ol class="slides">
+                                    <li>
+                                        <a href="static/img/shows/02.jpg"></a>
+                                    </li>
+                                    <li>
+                                        <a href="static/img/shows/03.jpg"></a>
+                                    </li>
+                                    <li>
+                                        <a href="static/img/shows/04.jpg"></a>
+                                    </li>
+                                    <li>
+                                        <a href="static/img/shows/05.jpg"></a>
+                                    </li>
+                                    <li>
+                                        <a href="static/img/shows/06.jpg"></a>
+                                    </li>
+                                    <li>
+                                        <a href="static/img/shows/07.jpg"></a>
+                                    </li>
+                                    <li>
+                                        <a href="static/img/shows/01.jpg"></a>
+                                    </li>
+                                </ol>
+                            </div>
+                    </div>
+                </div>
+            </div><!-- end sidebar_content -->
+            <div class="span9">
+                <div class="wrapper-login">
+                    <div class="container">
+                        <div class="row">
+                            <div class="login-content span4 offset4">
+                                <div class="header-login well">
+                                    <h3>Sign Up</h3>
+                                </div>
+                                <form class="well">
+                                    <label>Email</label>
+                                    <input type="text" class="input" placeholder="email@tvstalker.tv…">
+                                    <label>Username</label>
+                                    <input type="text" class="input" placeholder="username…">
+                                    <label>Password</label>
+                                    <input type="password" class="input" placeholder="password…">
 
 
+                                      <a href="index.html" type="submit" class="btn btn-info">Submit</a>
+                                </form>
+                            </div>
+                        <div>
+                    </div>
+                </div>
+                </div>
+                <!-- end content settings -->
+            </div>
+        </div>
+    </div><!-- end container -->
+</div><!-- end main -->
+
+{% endblock %}

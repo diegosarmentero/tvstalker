@@ -59,6 +59,7 @@ class Imdb(object):
         serie.title = self.title.title()
         serie.description = self.data['description']
         serie.store_image(self.data['image_link'])
+        serie.source_url = link
         serie.put()
         self._load_calendar(serie, link)
 

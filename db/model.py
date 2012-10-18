@@ -6,12 +6,27 @@ from google.appengine.api import files
 from google.appengine.api import urlfetch
 
 
+class StalkerLogin(db.Model):
+    access_token_key = db.StringProperty()
+    access_token_secret = db.StringProperty()
+    nick = db.StringProperty()
+    login_type = db.StringProperty()
+
+    def __init__(self, user, utype='google'):
+        self.nick = user.nickname()
+        self.login_type = utype
+
+    def nickname(self):
+        return self.nick
+
+
 class Serie(db.Model):
     name = db.StringProperty()
     title = db.StringProperty()
     description = db.StringProperty(multiline=True)
     image_name = db.StringProperty()
     last_season = db.IntegerProperty()
+    source_url = db.StringProperty()
 
     def store_image(self, link):
         file_name = files.blobstore.create(

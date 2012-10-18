@@ -30,36 +30,38 @@
 <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container">
-            <a class="brand" href="#">
+            <a class="brand" href="/">
                 <span>Tv </span><span class="cl-blue">Stalker</span>
             </a>
             <div class="nav-collapse">
                 <ul class="nav pull-right">
-                      <li><a href="index.html">Home</a></li>
+                      <li><a href="/">Home</a></li>
                       <li class="divider-vertical"></li>
 
+                    {% if nick %}
                       <li class="avatar_small"><a href="account.html"></a></li>
-                    <li class="dropdown">
-                        <a class="dropdown-toggle" href="#" data-toggle="dropdown">
-                            diego sarmentero
-                            <b class="caret"></b>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a href="#">
-                                    <i class="icon-user"></i>
-                                    Account Setting  </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <i class="icon-lock"></i> Change Password</a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a href="#"><i class="icon-off"></i> Logout</a>
-                            </li>
-                        </ul>
-                    </li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+                                {{ nick }}
+                                <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="profile">
+                                        <i class="icon-user"></i>
+                                        Account Setting  </a>
+                                </li>
+                                <li>
+                                    <a href="settings">
+                                        <i class="icon-lock"></i> Change Password</a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <a href="{{ logout }}"><i class="icon-off"></i> Logout</a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
@@ -73,18 +75,18 @@
     <div class="container">
         <div class="row">
             <div class="span6 logo-vt">
-                <a class="brand" href="#">
+                <a class="brand" href="/">
                     <span>Tv </span><span class="cl-blue">Stalker</span>
                 </a>
                 <span class="coppy_right">
-                    <p>@2012 All Rights Reserved.</p>
+                    <p>@2012 All your Tv Shows are belong to us.</p>
                 </span>
             </div>
             <div class="span2">
                 <ul class="nav nav-list">
-                    <li class="nav-header">Contact</li>
-                    <li><a href="#">Support</a></li>
+                    <li class="nav-header">Info</li>
                     <li><a href="#">About</a></li>
+                    <li><a href="https://github.com/diegosarmentero/tvstalker">Source Code</a></li>
                 </ul>
             </div>
             <div class="span2">
