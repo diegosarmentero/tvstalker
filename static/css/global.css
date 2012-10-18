@@ -981,10 +981,16 @@ code {
     display: none;
 }
 
+// Modified Bootstrap
 .row-login {
     margin-top: 20px;
 }
 
-.span9-login {
-    height: 500px;
+.hero-unit2 {
+  padding: 20px;
+  margin-bottom: 6px;
+}
+
+.widget-content p, .widget-content-pd p {
+    margin-bottom: 5px;
 }
