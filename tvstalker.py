@@ -25,11 +25,12 @@ def get_twitter_message(message):
         message.replace(' ', '+'))
 
 
-class PyDayHandler(webapp.RequestHandler):
+class TvStalkerHandler(webapp.RequestHandler):
 
     def user_login(self):
         result = {}
-        #user = users.get_current_user()
+        user = users.get_current_user()
+        result['user'] = user
         #is_profile = False
         #imdb.get_show_info('dexter')
         #if user is None:
@@ -56,37 +57,30 @@ class PyDayHandler(webapp.RequestHandler):
         for name, uri in providers.items():
             data[name] = users.create_login_url(federated_identity=uri)
         path = os.path.join(os.path.dirname(__file__),
-            "templates/others/login.html")
-        self.response.out.write(template.render(path, data))
-
-    def show_error(self, page_base, message, data):
-        data['showerror'] = 'block'
-        data['errormessage'] = message
-        if 'form' in data:
-            data['form'].errors.clear()
-        path = os.path.join(os.path.dirname(__file__), page_base)
+            "templates/login.html")
         self.response.out.write(template.render(path, data))
 
 
-class NotFoundPageHandler(PyDayHandler):
+class NotFoundPageHandler(TvStalkerHandler):
     def get(self):
-        #result = self.user_login()
         path = os.path.join(os.path.dirname(__file__),
             "templates/page404.html")
-        #result['title'] = 'Error 404'
-        #result['message'] = 'La pagina a la que intento acceder no existe.'
         self.response.out.write(template.render(path, {}))
 
 
-class MainPage(PyDayHandler):
+class MainPage(TvStalkerHandler):
     def get(self):
         result = self.user_login()
-        path = os.path.join(os.path.dirname(__file__), "templates/index.html")
-        serie = db.get_tv_show('dexter')
-        url = images.get_serving_url(files.blobstore.get_blob_key(
-            serie.image_name))
-        result['image_key'] = url
-        self.response.out.write(template.render(path, result))
+        if result['user'] is None:
+            self.go_to_login(result)
+        else:
+            path = os.path.join(os.path.dirname(__file__),
+                "templates/index.html")
+            serie = db.get_tv_show('dexter')
+            #url = images.get_serving_url(files.blobstore.get_blob_key(
+                #serie.image_name))
+            #result['image_key'] = url
+            self.response.out.write(template.render(path, result))
 
 
 def main():

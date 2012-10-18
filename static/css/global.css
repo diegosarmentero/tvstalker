@@ -31,6 +31,9 @@ ul,li{
 .box-wrapper {
 	margin-bottom:40px;
 }
+.box-wrapper2 {
+	margin-bottom:20px;
+}
 .border-rd4{
 	border-radius:4px;
 	-moz-border-radius:4px;
@@ -438,7 +441,7 @@ border-bottom-color: #999;
 .user_info ul > li > a > i{
 	margin-right:5px;
 }
-.user_info a.avatar{
+.user_info a.avatar {
 	display:block;
 	margin-bottom:10px;
 }
@@ -511,7 +514,7 @@ border-bottom-color: #999;
 /*------------ login ---------------*/
 .login-content {
 	color:#ddd;
-	margin-top:10%;
+	margin-top:0%;
 	font-size:11px;
 }
 .login-content .header-login{
@@ -942,10 +945,46 @@ code {
 	* margin:0px 0.4%;
 }
 
+.rs-slideshow {
+    border: 5px solid #1D1F23;
+    height: 317px;
+    margin: 0px auto;
+    overflow: hidden;
+    position: relative;
+    width: 218px;
+}
 
+.slide-container {
+    border: 0px solid #1D1F23;
+    height: 317px;
+    margin: 0px auto;
+    overflow: hidden;
+    position: relative;
+}
 
+.rs-slideshow .slide-container {
+    background-color: #1D1F23;
+    height: 100%;
+    left: 0;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
 
+.rs-slideshow .slide-container img {
+    position: relative;
+}
 
+/*    Hide the slide data container    */
+.rs-slideshow .slides {
+    display: none;
+}
 
+.row-login {
+    margin-top: 20px;
+}
 
-
+.span9-login {
+    height: 500px;
+}
