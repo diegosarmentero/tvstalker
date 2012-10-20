@@ -54,7 +54,7 @@ class TvStalkerHandler(webapp.RequestHandler):
 
         return result
 
-    def go_to_login(self, data, error=False):
+    def go_to_login(self, error=False):
         url = '/login'
         if error:
             url += '?error=true'
@@ -80,7 +80,7 @@ class ProfilePage(TvStalkerHandler):
     def get(self):
         result = self.user_login()
         if result['user'] is None:
-            self.go_to_login(result)
+            self.go_to_login()
         else:
             path = os.path.join(os.path.dirname(__file__),
                 "templates/profile.html")
@@ -91,7 +91,7 @@ class SettingsPage(TvStalkerHandler):
     def get(self):
         result = self.user_login()
         if result['user'] is None:
-            self.go_to_login(result)
+            self.go_to_login()
         else:
             path = os.path.join(os.path.dirname(__file__),
                 "templates/setting.html")
@@ -186,12 +186,13 @@ class LoginPage(TvStalkerHandler):
         login = model.StalkerLogin.get_by_key_name(stalker_user)
         if login is None or login.access_token_key != password:
             # Invalid login
-            self.go_to_login({}, True)
+            self.go_to_login(True)
             return
         # Load session
         session = get_current_session()
         session["stalker_user"] = stalker_user
-        self.go_to_home()
+        result = self.user_login()
+        self.go_to_home(result)
 
 
 class AboutPage(TvStalkerHandler):
@@ -206,7 +207,7 @@ class MainPage(TvStalkerHandler):
     def get(self):
         result = self.user_login()
         if result['user'] is None:
-            self.go_to_login(result)
+            self.go_to_login()
         else:
             self.go_to_home(result)
 
