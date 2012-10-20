@@ -54,10 +54,16 @@ class TvStalkerHandler(webapp.RequestHandler):
 
         return result
 
-    def go_to_login(self, data):
-        self.redirect('/login')
+    def go_to_login(self, data, error=False):
+        url = '/login'
+        if error:
+            url += '?error=true'
+        self.redirect(url)
 
     def go_to_home(self, data):
+        #url = images.get_serving_url(files.blobstore.get_blob_key(
+            #serie.image_name))
+        #result['image_key'] = url
         path = os.path.join(os.path.dirname(__file__),
             "templates/index.html")
         self.response.out.write(template.render(path, data))
@@ -98,28 +104,40 @@ class ValidatePage(TvStalkerHandler):
         path = os.path.join(os.path.dirname(__file__),
             "templates/validate.html")
         data = {'email': email}
+        error = cgi.escape(self.request.get('error'))
+        if error:
+            data['error'] = True
         self.response.out.write(template.render(path, data))
 
     def post(self):
         email = cgi.escape(self.request.get('email'))
         code = cgi.escape(self.request.get('code'))
         validate = db.get_activation_account(email, code)
-        key_name = 'stalker:%s' % validate.username
-        login = model.StalkerLogin(key_name=key_name, login_type='stalker')
-        login.access_token_key = validate.password
-        login.username = validate.username
-        validate.delete()
+        if validate is not None:
+            key_name = 'stalker:%s' % validate.username
+            login = model.StalkerLogin(key_name=key_name, login_type='stalker')
+            login.access_token_key = validate.password
+            login.username = validate.username
+            login.put()
+            validate.delete()
+            self.go_to_login()
+        else:
+            # Activation not founnd
+            self.redirect('/validate?error=true&email=%s' % email)
 
 
 class SignUpPage(TvStalkerHandler):
     def get(self):
         result = self.user_login()
+        error = cgi.escape(self.request.get('error'))
+        if error:
+            result['error'] = True
         if result['user'] is not None:
             self.go_to_home(result)
         else:
             path = os.path.join(os.path.dirname(__file__),
                 "templates/sign-up.html")
-            self.response.out.write(template.render(path, {}))
+            self.response.out.write(template.render(path, result))
 
     def post(self):
         email = cgi.escape(self.request.get('email'))
@@ -128,6 +146,7 @@ class SignUpPage(TvStalkerHandler):
         password = hashlib.sha512(password).hexdigest()
         valid = db.check_username_is_valid(username)
         if valid:
+            db.clean_previous_activation(email)
             validate = model.ValidateUser()
             validate.username = username
             validate.email = email
@@ -136,6 +155,9 @@ class SignUpPage(TvStalkerHandler):
             validate.put()
             self.send_validate_email(email, validate.validate_code)
             self.redirect('/validate?email=%s' % email)
+        else:
+            # Invalid username or already taken
+            self.redirect('/SignUp?error=true')
 
     def send_validate_email(self, email, code):
         mailFrom = "notifications@tvstalker.tv"
@@ -147,6 +169,9 @@ class SignUpPage(TvStalkerHandler):
 class LoginPage(TvStalkerHandler):
     def get(self):
         result = self.user_login()
+        error = cgi.escape(self.request.get('error'))
+        if error:
+            result['error'] = True
         for name, uri in providers.items():
             result[name] = users.create_login_url(federated_identity=uri)
         path = os.path.join(os.path.dirname(__file__),
@@ -157,16 +182,24 @@ class LoginPage(TvStalkerHandler):
         username = cgi.escape(self.request.get('username'))
         password = cgi.escape(self.request.get('password'))
         password = hashlib.sha512(password).hexdigest()
-        remember = cgi.escape(self.request.get('remember')) == 'on'
         stalker_user = 'stalker:%s' % username
         login = model.StalkerLogin.get_by_key_name(stalker_user)
         if login is None or login.access_token_key != password:
             # Invalid login
-            data = {'invalid': 'Invalid username or password'}
-            self.go_to_login(data)
-        self.response.out.write(username)
-        self.response.out.write(password)
-        self.response.out.write(remember)
+            self.go_to_login({}, True)
+            return
+        # Load session
+        session = get_current_session()
+        session["stalker_user"] = stalker_user
+        self.go_to_home()
+
+
+class AboutPage(TvStalkerHandler):
+    def get(self):
+        result = self.user_login()
+        path = os.path.join(os.path.dirname(__file__),
+            "templates/about.html")
+        self.response.out.write(template.render(path, result))
 
 
 class MainPage(TvStalkerHandler):
@@ -176,9 +209,6 @@ class MainPage(TvStalkerHandler):
             self.go_to_login(result)
         else:
             self.go_to_home(result)
-            #url = images.get_serving_url(files.blobstore.get_blob_key(
-                #serie.image_name))
-            #result['image_key'] = url
 
 
 def main():
@@ -189,6 +219,7 @@ def main():
         ('/settings', SettingsPage),
         ('/login', LoginPage),
         ('/validate', ValidatePage),
+        ('/about', AboutPage),
         ('/.*', NotFoundPageHandler),
         ], debug=True)
     run_wsgi_app(application)

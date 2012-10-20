@@ -66,13 +66,13 @@
                                     <h3>Login</h3>
                                 </div>
                                 <form class="well" method="post">
+                                    {% if error %}
+                                        <label class="error-style">Invalid Username or Password</label>
+                                    {% endif %}
                                     <label>Username</label>
                                     <input type="text" name="username" class="input" placeholder="Username…">
                                     <label>Password</label>
                                     <input type="password" name="password" class="input" placeholder="Password…">
-                                    <label class="checkbox">
-                                        <input name="remember" type="checkbox"> Remember me
-                                    </label>
 
                                       <input type="submit" class="btn btn-info" value="Submit">
                                       <p class="sign-up-lg">Don't have an account? <a href="SignUp">Sign Up.</a></p>

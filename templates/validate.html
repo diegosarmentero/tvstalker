@@ -13,6 +13,9 @@
                     <div class="wrapper-search form-error404">
                         <h3  class="title">Enter the activation code for account:</h3>
                         <form class="form-inline" method="post">
+                            {% if error %}
+                                <label class="error-style">Invalid Activation Code</label><br>
+                            {% endif %}
                             <label name="email">{{ email }}</label>
                             <input type="text" name="code" class="input" placeholder="Activation code…">
                             <button class="btn btn-gray-s1">Submit</button>

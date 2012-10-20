@@ -66,6 +66,9 @@
                                     <h3>Sign Up</h3>
                                 </div>
                                 <form class="well" method="post">
+                                    {% if error %}
+                                        <label class="error-style">Invalid Username or already taken</label>
+                                    {% endif %}
                                     <label>Email</label>
                                     <input name="email" type="text" class="input" placeholder="email…">
                                     <label>Username</label>

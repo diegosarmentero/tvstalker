@@ -994,3 +994,7 @@ code {
 .widget-content p, .widget-content-pd p {
     margin-bottom: 5px;
 }
+
+.error-style {
+    color:#FF5335;
+}
