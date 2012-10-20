@@ -38,11 +38,11 @@
                       <li><a href="/">Home</a></li>
                       <li class="divider-vertical"></li>
 
-                    {% if nick %}
+                    {% if user %}
                       <li class="avatar_small"><a href="account.html"></a></li>
                         <li class="dropdown">
                             <a class="dropdown-toggle" href="#" data-toggle="dropdown">
-                                {{ nick }}
+                                {{ user.nick }}
                                 <b class="caret"></b>
                             </a>
                             <ul class="dropdown-menu">
@@ -54,6 +54,11 @@
                                 <li>
                                     <a href="settings">
                                         <i class="icon-lock"></i> Change Password</a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <a href="settings">
+                                        <i class="icon-envelope"></i> Report Bug</a>
                                 </li>
                                 <li class="divider"></li>
                                 <li>
@@ -91,8 +96,9 @@
             </div>
             <div class="span2">
                 <ul class="nav nav-list">
-                    <li class="nav-header">Problem?</li>
-                    <li><a href="#">Report Bug</a></li>
+                    <li class="nav-header">Help Us</li>
+                    <br>
+                    <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=384BA8JMN39NS" class="btn btn-red-s2">Donate!</a>
                 </ul>
             </div>
             <div class="span2">

@@ -16,7 +16,7 @@
                     <div class="widget-content">
                         <div class="hero-unit hero-unit2">
                           <h1>Tv Stalker</h1>
-                          <p>All the information about your favorite Tv Shows in one place.</p>
+                          <p>Follow your Tv Shows, check the airdates, recommends shows to your friends and never miss an episode again!</p>
                         </div>
                     </div>
                 </div>
@@ -65,18 +65,21 @@
                                 <div class="header-login well">
                                     <h3>Login</h3>
                                 </div>
-                                <form class="well">
+                                <form class="well" method="post">
                                     <label>Username</label>
-                                    <input type="text" class="input" placeholder="Username…">
+                                    <input type="text" name="username" class="input" placeholder="Username…">
                                     <label>Password</label>
                                     <input type="password" name="password" class="input" placeholder="Password…">
+                                    <label class="checkbox">
+                                        <input name="remember" type="checkbox"> Remember me
+                                    </label>
 
-                                      <a href="index.html" type="submit" class="btn btn-info">Submit</a>
+                                      <input type="submit" class="btn btn-info" value="Submit">
                                       <p class="sign-up-lg">Don't have an account? <a href="SignUp">Sign Up.</a></p>
                                       <div class="box-wrapper box-wrapper2"></div>
                                       Alternative Logins<br>
                                       <a href="{{ google }}" class="btn btn-red-s6"><img src="static/img/Google-Logo.png"/>  Google Login</a>
-                                      <a class="btn btn-blue-s5"><img src="static/img/Twitter-Logo.png"/>  Twitter Login</a>
+                                      <a href="/oauth/signin_twitter" class="btn btn-blue-s5"><img src="static/img/Twitter-Logo.png"/>  Twitter Login</a>
                                 </form>
                             </div>
                         <div>

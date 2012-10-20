@@ -63,17 +63,20 @@
                         <div class="row">
                             <div class="login-content span4 offset4">
                                 <div class="header-login well">
-                                    <h3>Sign Up</h3>
+                                    <h3>Login</h3>
                                 </div>
                                 <form class="well" method="post">
-                                    <label>Email</label>
-                                    <input name="email" type="text" class="input" placeholder="email…">
                                     <label>Username</label>
-                                    <input name="username" type="text" class="input" placeholder="username…">
+                                    <input type="text" name="username" class="input" placeholder="Username…">
                                     <label>Password</label>
-                                    <input name="password" type="password" class="input" placeholder="password…">
+                                    <input type="password" name="password" class="input" placeholder="Password…">
 
                                       <input type="submit" class="btn btn-info" value="Submit">
+                                      <p class="sign-up-lg">Don't have an account? <a href="SignUp">Sign Up.</a></p>
+                                      <div class="box-wrapper box-wrapper2"></div>
+                                      Alternative Logins<br>
+                                      <a href="{{ google }}" class="btn btn-red-s6"><img src="static/img/Google-Logo.png"/>  Google Login</a>
+                                      <a href="/oauth/signin_twitter" class="btn btn-blue-s5"><img src="static/img/Twitter-Logo.png"/>  Twitter Login</a>
                                 </form>
                             </div>
                         <div>

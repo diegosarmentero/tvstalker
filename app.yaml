@@ -1,5 +1,5 @@
 application: tv-stalker
-version: 1
+version: 2
 runtime: python
 api_version: 1
 
@@ -10,6 +10,18 @@ handlers:
 - url: /favicon.ico
   static_files: static/img/favicon.ico
   upload: static/img/favicon.ico
+
+- url: /oauth/signin_twitter
+  script: oauth_login.py
+
+- url: /oauth/twitter
+  script: oauth_login.py
+
+- url: /oauth/signout
+  script: oauth_login.py
+
+- url: /oauth/cleanup_sessions
+  script: oauth_login.py
 
 - url: /.*
   script: tvstalker.py
