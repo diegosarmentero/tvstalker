@@ -45,8 +45,11 @@ class TvStalkerHandler(webapp.RequestHandler):
         else:
             session = get_current_session()
             stalker_user = session.get("stalker_user")
+            password = session.get("stalker_request_key")
             if stalker_user is not None:
                 login = model.StalkerLogin.get_by_key_name(stalker_user)
+                if login and login.access_token_key != password:
+                    login = None
             else:
                 login = None
             result['logout'] = '/oauth/signout'
@@ -119,6 +122,11 @@ class ValidatePage(TvStalkerHandler):
             login.access_token_key = validate.password
             login.username = validate.username
             login.put()
+            user = model.User()
+            user.email = email
+            user.password = validate.password
+            user.login = login
+            user.put()
             validate.delete()
             self.go_to_login()
         else:
@@ -191,6 +199,7 @@ class LoginPage(TvStalkerHandler):
         # Load session
         session = get_current_session()
         session["stalker_user"] = stalker_user
+        session["stalker_request_key"] = password
         result = self.user_login()
         self.go_to_home(result)
 

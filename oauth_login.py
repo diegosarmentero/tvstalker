@@ -109,9 +109,10 @@ class TwitterAuthorized(webapp.RequestHandler):
 
         profile.access_token_key = key
         profile.access_token_secret = secret
-        profile.nick = twituser.screen_name
+        profile.username = twituser.screen_name
         profile.save()
         session["stalker_user"] = twitter_user
+        session['stalker_request_key'] = key
         self.redirect("/")
 
 

@@ -34,3 +34,11 @@ def get_activation_account(email, code):
     if activate.count() == 0:
         return None
     return activate[0]
+
+
+def is_show_in_db(source_url):
+    serie = model.Serie.all()
+    serie.filter('source_url =', source_url)
+    if serie.count() == 0:
+        return None
+    return serie[0]

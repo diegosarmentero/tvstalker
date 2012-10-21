@@ -7,9 +7,9 @@
             <div class="box-wrapper span12">
                 <div class="widget">
                     <div class="wrapper-search">
-                        <form class="form-inline form-search border-rd4">
-                            <input placeholder="Type the name of a Tv Show to follow ..." type="text" class="box-text">
-                            <a href="#"class="btn-search"></a>
+                        <form class="form-inline form-search border-rd4" id="form_search">
+                            <input placeholder="Type the name of a Tv Show to follow ..." type="text" id="search_show" class="box-text"/>
+                            <a href="#" id="btn_search" class="btn-search"></a>
                         </form>
                     </div>
                 </div>
@@ -17,11 +17,10 @@
         </div>
         <div class="row">
             <div class="box-wrapper  span12">
-
                 <div class="row">
                     <div class="title span12">
                         <h3 class="pull-left">My Tv Shows!</h3>
-                        <div class="sort pull-right dropdown">
+                        <!--div class="sort pull-right dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                                 Display Shows
                                 <b class="caret"></b>
@@ -30,166 +29,44 @@
                                 <li><a href="#"><i class="icon-tag"></i>Currents</a></li>
                                 <li><a href="#"><i class="icon-list"></i>From all times</a></li>
                             </ul>
-                        </div>
+                        </div-->
                     </div><!-- end title -->
                 </div>
-                <ul class="thumbnails thumbnails-horizontal">
-                    <li class="span3">
-                        <div class="thumbnail border-radius-top">
-                            <div class="bg-thumbnail-img">
-                                <a class="overlay" href="#">
-                                    <img src="static/img/icons/play.png">
-                                    <p>Soul Train</p>
-                                </a>
-                                <img class="border-radius-top" src="static/img/shows/revolution.jpg">
+                <ul id="shows_list" class="thumbnails thumbnails-horizontal">
+                    {% if shows %}
+                    {% for show in shows %}
+                        <li class="span3">
+                            <div class="thumbnail border-radius-top">
+                                <div class="bg-thumbnail-img">
+                                    <a class="overlay" href="#">
+                                        <img src="static/img/icons/play.png">
+                                        <p>{{ show.episode_title }}</p>
+                                    </a>
+                                    <img class="border-radius-top" src="{{ show.image }}">
+                                </div>
+                                <h5><a href="/details?show={{ show.title }}">{{ show.title }}</a></h5>
+                                <h5><a href="/details?show={{ show.title }}&episode={{ show.season }}x{{ show.episode }}">
+                                    Season: {{ show.season }}  |  Episode: {{ show.episode }}</a></h5>
                             </div>
-                            <h5><a href="#">Revolution</a></h5>
-                            <h5><a href="#">Season: 01  |  Episode: 04</a></h5>
-                        </div>
-                        <div class="box border-radius-bottom">
-                            <p>
-                                <span class="title_torrent pull-left pull-left">TODAY</span>
-                                <!--span class="number-view pull-right">1,444,898</span-->
-                            </p>
-                        </div>
-                    </li>
-                    <li class="span3">
-                        <div class="thumbnail border-radius-top">
-                            <div class="bg-thumbnail-img">
-                                <a class="overlay" href="#">
-                                    <img src="static/img/icons/play.png">
-                                    <p>Buck The System</p>
-                                </a>
-                                <img class="border-radius-top" src="{{ image_key }}">
+                            <div class="box border-radius-bottom">
+                                <p>
+                                    {% if today %}
+                                        <span class="title_torrent pull-left pull-left">TODAY</span>
+                                    {% else %}
+                                        <span class="title_torrent pull-left">Next Episode</span>
+                                        <span class="number-view pull-right"> {{ show.airdate }}</span>
+                                    {% endif %}
+                                </p>
                             </div>
-                            <h5><a href="#">Dexter</a></h5>
-                            <h5><a href="#">Season: 07  |  Episode: 03</a></h5>
+                        </li>
+                    {% endfor %}
+                    {% else %}
+                    <div id="not_following" class="widget-content">
+                        <div class="hero-unit hero-unit2">
+                          <p>You are not following any Tv Show... What are you waiting for?!</p>
                         </div>
-                        <div class="box border-radius-bottom">
-                            <p>
-                                <span class="title_torrent pull-left">TODAY</span>
-                                <!--span class="number-view pull-right">TODAY</span-->
-                            </p>
-                        </div>
-                    </li>
-                    <li class="span3">
-                        <div class="thumbnail border-radius-top">
-                            <div class="bg-thumbnail-img">
-                                <a class="overlay" href="#">
-                                    <img src="static/img/icons/play.png">
-                                    <p>Honor Thy Father</p>
-                                </a>
-                                <img class="border-radius-top" src="static/img/shows/arrow.jpg">
-                            </div>
-                            <h5><a href="#">Arrow</a></h5>
-                            <h5><a href="#">Season: 01  |  Episode: 02</a></h5>
-                        </div>
-                        <div class="box border-radius-bottom">
-                            <p>
-                                <span class="title_torrent pull-left">Next Episode</span>
-                                <span class="number-view pull-right">Oct, 17, 2012</span>
-                            </p>
-                        </div>
-                    </li>
-                    <li class="span3">
-                        <div class="thumbnail border-radius-top">
-                            <div class="bg-thumbnail-img">
-                                <a class="overlay" href="#">
-                                    <img src="static/img/icons/play.png">
-                                    <p>Diamond in the Rough</p>
-                                </a>
-                                <img class="border-radius-top" src="static/img/shows/bones.jpg">
-                            </div>
-                            <h5><a href="#">Bones</a></h5>
-                            <h5><a href="#">Season: 08  |  Episode: 04</a></h5>
-                        </div>
-                        <div class="box border-radius-bottom">
-                            <p>
-                                <span class="title_torrent pull-left">Next Episode</span>
-                                <span class="number-view pull-right"> Dec. 10, 2012</span>
-                            </p>
-                        </div>
-                    </li>
-
-                    <li class="span3">
-                        <div class="thumbnail border-radius-top">
-                            <div class="bg-thumbnail-img">
-                                <a class="overlay" href="#">
-                                    <img src="static/img/icons/play.png">
-                                    <p>Through the Looking Glass</p>
-                                </a>
-                                <img class="border-radius-top" src="static/img/shows/criminal_minds.jpg">
-                            </div>
-                            <h5><a href="#">Criminal Minds</a></h5>
-                            <h5><a href="#">Season: 08  |  Episode: 03</a></h5>
-                        </div>
-                        <div class="box border-radius-bottom">
-                            <p>
-                                <span class="title_torrent pull-left">Next Episode</span>
-                                <span class="number-view pull-right">Oct 16, 2012</span>
-                            </p>
-                        </div>
-                    </li>
-
-                    <li class="span3">
-                        <div class="thumbnail border-radius-top">
-                            <div class="bg-thumbnail-img">
-                                <a class="overlay" href="#">
-                                    <img src="static/img/icons/play.png">
-                                    <p></p>
-                                </a>
-                                <img class="border-radius-top" src="static/img/shows/continuum.jpg">
-                            </div>
-                            <h5><a href="#">Continuum</a></h5>
-                            <h5><a href="#">Season: 02  |  Episode: 01</a></h5>
-                        </div>
-                        <div class="box border-radius-bottom">
-                            <p>
-                                <span class="title_torrent pull-left">Next Episode</span>
-                                <span class="number-view pull-right">2013</span>
-                            </p>
-                        </div>
-                    </li>
-
-                    <li class="span3">
-                        <div class="thumbnail border-radius-top">
-                            <div class="bg-thumbnail-img">
-                                <a class="overlay" href="#">
-                                    <img src="static/img/icons/play.png">
-                                    <p>Proceed with Caution</p>
-                                </a>
-                                <img class="border-radius-top" src="static/img/shows/beauty.jpg">
-                            </div>
-                            <h5><a href="#">Beauty and the Beast</a></h5>
-                            <h5><a href="#">Season: 01  |  Episode: 02</a></h5>
-                        </div>
-                        <div class="box border-radius-bottom">
-                            <p>
-                                <span class="title_torrent pull-left">Next Episode</span>
-                                <span class="number-view pull-right">Oct 18, 2012</span>
-                            </p>
-                        </div>
-                    </li>
-
-                    <li class="span3">
-                        <div class="thumbnail border-radius-top">
-                            <div class="bg-thumbnail-img">
-                                <a class="overlay" href="#">
-                                    <img src="static/img/icons/play.png">
-                                    <p>The Re-Entry Minimization</p>
-                                </a>
-                                <img class="border-radius-top" src="static/img/shows/big_bang.jpg">
-                            </div>
-                            <h5><a href="#">The Big Bang Theory</a></h5>
-                            <h5><a href="#"></a>Season: 06  |  Episode: 04</h5>
-                        </div>
-                        <div class="box border-radius-bottom">
-                            <p>
-                                <span class="title_torrent pull-left">Next Episode</span>
-                                <span class="number-view pull-right">Oct 18, 2012</span>
-                            </p>
-                        </div>
-                    </li>
+                    </div>
+                    {% endif %}
                 </ul>
             </div><!-- end  -->
 
@@ -207,7 +84,7 @@
                                 <a class="overlay" href="#">
                                     <img src="static/img/icons/play.png">
                                 </a>
-                                <img class="border-radius-top" src="static/img/shows/breaking_bad.jpg">
+                                <img class="border-radius-top" src="static/img/shows/05.jpg">
                             </div>
                             <div class="thumbnail-content-left">
                                 <h5><a href="#">Breaking Bad</a></h5>
@@ -229,7 +106,7 @@
                                 <a class="overlay" href="#">
                                     <img src="static/img/icons/play.png">
                                 </a>
-                                <img class="border-radius-top" src="static/img/shows/the_newsroom.jpg">
+                                <img class="border-radius-top" src="static/img/shows/07.jpg">
                             </div>
                             <div class="thumbnail-content-left">
                                 <h5><a href="#">The Newsroom</a></h5>
@@ -247,7 +124,7 @@
                     </li>
 
                 </ul>
-                <div class="row">
+                <!--div class="row">
                     <div class="span10">
                         <div class="navigation pagination pull-right">
                             <ul>
@@ -258,8 +135,8 @@
                                 <li><a href="#">→</a></li>
                             </ul>
                         </div>
-                    </div><!-- end navigation -->
-                </div>
+                    </div>
+                </div-->
             </div><!-- end  -->
             <div class="row">
                 <div class="list-menu box-wrapper span2">
@@ -269,15 +146,25 @@
                         </div>
                     </div>
                     <ul class="nav nav-list">
-                        <li class="active"><a href="index.html"><i class="icon-list-alt"></i>Most viewed</a></li>
+                        <li class="active"><a href="#"><i class="icon-list-alt"></i>Most viewed</a></li>
+<!--
+                        <li class="active"><a href="index.html"><i class="icon-list-alt"></i>Most rated</a></li>
                         <li><a href="#"><i class="icon-list-alt"></i>By Friends</a></li>
                         <li><a href="#"><i class="icon-list-alt"></i>By Genre</a></li>
+-->
                     </ul>
                 </div>
             </div><!-- row -->
-            <!-- **************** end All Flie  ****************** -->
+            <!-- **************** end All File  ****************** -->
         </div><!-- row -->
 
     </div><!-- end container -->
 </div><!-- end main -->
+
+<script type="text/javascript" src="static/js/pnotify-1.2.0/jquery.pnotify.min.js"></script>
+<link href="static/js/pnotify-1.2.0/jquery.pnotify.default.css" rel="stylesheet" type="text/css" />
+<link href="static/js/pnotify-1.2.0/jquery.pnotify.default.icons.css" rel="stylesheet" type="text/css" />
+<link type="text/css" rel="stylesheet" href="static/css/global.css" />
+<script src="static/js/actions.js"></script>
+<script src="static/js/index_customization.js"></script>
 {% endblock %}

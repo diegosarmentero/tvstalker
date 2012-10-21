@@ -71,3 +71,8 @@ class User(db.Model):
     password = db.StringProperty()
     avatar = db.BlobProperty(default=None)
     login = db.ReferenceProperty(StalkerLogin)
+
+
+class FollowingShows(db.Model):
+    login = db.ReferenceProperty(StalkerLogin)
+    serie = db.ReferenceProperty(Serie)

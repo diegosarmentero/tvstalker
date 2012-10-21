@@ -4,7 +4,10 @@ import os
 
 from BeautifulSoup import BeautifulSoup
 
-from db import model
+from db import (
+    db,
+    model,
+)
 import browser
 
 
@@ -41,9 +44,14 @@ class Imdb(object):
         except ValueError:
             #do something
             pass
+        return self.title
 
     def _load_show_data(self, link):
         link = self.imdb_link % link
+        show = db.is_show_in_db(link)
+        if show:
+            self.title = show.name
+            return
         page = self._browser.open(link)
         content = page.read()
         soup = BeautifulSoup(content)

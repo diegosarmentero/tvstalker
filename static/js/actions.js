@@ -59,4 +59,47 @@ if( !window.XMLHttpRequest ) XMLHttpRequest = function()
   throw new Error("Could not find an XMLHttpRequest alternative.")
 };
 
-//InstallFunction(server, '');
+InstallFunction(server, 'AddTvShow');
+
+function addTvShow(){
+    if($("#search_show").val().length > 0){
+        $.pnotify({
+            title: 'Show: ' + $("#search_show").val(),
+            text: 'Stalking for Tv Show data.\nInformation will be available soon...'
+        });
+        server.AddTvShow($("#search_show").val(), updateShows);
+        $("#search_show").val("");
+    }
+}
+
+function updateShows(info){
+    if(info){
+        $("#not_following").html(info["test"])
+        html = "<li class=\"span3\">" +
+            "<div class=\"thumbnail border-radius-top\">" +
+                "<div class=\"bg-thumbnail-img\">" +
+                    "<a class=\"overlay\" href=\"#\">" +
+                        "<img src=\"static/img/icons/play.png\">" +
+                        "<p>{{ show.episode_title }}</p>" +
+                    "</a>" +
+                    "<img class=\"border-radius-top\" src=\"{{ show.image }}\">" +
+                "</div>" +
+                "<h5><a href=\"/details?show={{ show.title }}\">{{ show.title }}</a></h5>" +
+                "<h5><a href=\"/details?show={{ show.title }}&episode={{ show.season }}x{{ show.episode }}\">" +
+                    "Season: {{ show.season }}  |  Episode: {{ show.episode }}</a></h5>" +
+            "</div>" +
+            "<div class=\"box border-radius-bottom\">" +
+                "<p>" +
+                    "{% if today %}" +
+                        "<span class=\"title_torrent pull-left pull-left\">TODAY</span>" +
+                    "{% else %}" +
+                        "<span class=\"title_torrent pull-left\">Next Episode</span>" +
+                        "<span class=\"number-view pull-right\"> {{ show.airdate }}</span>" +
+                    "{% endif %}" +
+                "</p>" +
+            "</div>" +
+        "</li>";
+        $(html).appendTo("#shows_list");
+        alert(info);
+    }
+}

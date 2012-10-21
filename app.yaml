@@ -23,5 +23,8 @@ handlers:
 - url: /oauth/cleanup_sessions
   script: oauth_login.py
 
+- url: /rpc
+  script: rpc.py
+
 - url: /.*
   script: tvstalker.py
