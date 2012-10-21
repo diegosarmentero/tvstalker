@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import os
+import difflib
+import datetime
 
 from BeautifulSoup import BeautifulSoup
 
@@ -9,6 +11,13 @@ from db import (
     model,
 )
 import browser
+
+
+MONTHS = {}
+
+for i in range(1, 13):
+    MONTHS[unicode(
+        datetime.date(2012, i, 1).strftime('%B').strip().lower())[:3]] = i
 
 
 class NotGoodMatchException(Exception):
@@ -55,14 +64,17 @@ class Imdb(object):
         page = self._browser.open(link)
         content = page.read()
         soup = BeautifulSoup(content)
-        if (self.title not in repr(soup.title).lower() or
-            'tv serie' not in repr(soup.title).lower()):
+        show_title = soup.title.text[:soup.title.text.find(
+            '(')].strip().lower()
+        ratio = difflib.SequenceMatcher(None, self.title, show_title).ratio()
+        if (ratio < 0.85 or 'tv serie' not in soup.title.text.lower()):
             raise NotGoodMatchException(self.title)
 
         div = soup.find('div', id="title-overview-widget")
         self.data['image_link'] = div.find('img')['src']
         self.data['description'] = div.find('p', itemprop='description').text
         serie = model.Serie()
+        self.title = show_title
         serie.name = self.title
         serie.title = self.title.title()
         serie.description = self.data['description']
@@ -78,7 +90,7 @@ class Imdb(object):
         soup = BeautifulSoup(content)
         season_list = soup.find('select', id='bySeason')
         values = season_list.findAll('option')
-        seasons = [int(i.text) for i in values]
+        seasons = [int(i.text) for i in values if i and str(i.text).isdigit()]
         self.data['seasons'] = seasons
 
         # Update last season
@@ -87,6 +99,7 @@ class Imdb(object):
         # Obtain Seasons
         season = model.Season()
         season.nro = seasons[-1]
+        season.serie = serie
         season.put()
         self._parse_season(season, content)
         # This produce a timeout, maybe could be completed on demand
@@ -101,18 +114,31 @@ class Imdb(object):
 
     def _parse_season(self, season, content):
         soup = BeautifulSoup(content)
-        divs = soup.findAll('div', id='episodes')
+        divs = soup.findAll('div', itemprop='episodes')
+        episode_nro = 1
         for div in divs:
-            airdate = div.find('div', {'class': 'airdate'}).text
-            title = div.find('a', itemprop='name').text
-            description = div.find('a', itemprop='description').text
+            airdate = div.find('div', {'class': 'airdate'})
+            if airdate is None:
+                continue
             episode = model.Episode()
+            airdate = airdate.text
+            title = div.find('a', itemprop='name').text
             episode.title = title
-            episode.description = description
+            description = div.find('a', itemprop='description')
+            if description is not None:
+                episode.description = description.text
             real_date = self._obtain_airdate(airdate)
             episode.airdate = real_date
             episode.season = season
+            episode.nro = episode_nro
             episode.put()
+            episode_nro += 1
 
     def _obtain_airdate(self, airdate):
-        pass
+        airdate = airdate.replace('.', '').replace(',', '')
+        airdate = airdate.split(' ')
+        if len(airdate) != 3:
+            return None
+        date = datetime.date(int(airdate[2]),
+            MONTHS[airdate[0].strip().lower()], int(airdate[1]))
+        return date

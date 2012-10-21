@@ -73,33 +73,49 @@ function addTvShow(){
 }
 
 function updateShows(info){
-    if(info){
-        $("#not_following").html(info["test"])
+    if(!info['error']){
+        if(info['do_nothing']){
+            $.pnotify({
+                title: info["title"],
+                text: 'Already following!',
+                type: 'success'
+            });
+            return;
+        }
+        $("#not_following").html("")
         html = "<li class=\"span3\">" +
             "<div class=\"thumbnail border-radius-top\">" +
                 "<div class=\"bg-thumbnail-img\">" +
                     "<a class=\"overlay\" href=\"#\">" +
                         "<img src=\"static/img/icons/play.png\">" +
-                        "<p>{{ show.episode_title }}</p>" +
+                        "<p>" + info["episode_title"] + "</p>" +
                     "</a>" +
-                    "<img class=\"border-radius-top\" src=\"{{ show.image }}\">" +
+                    "<img class=\"border-radius-top\" src=\"" + info["image_url"] + "\">" +
                 "</div>" +
-                "<h5><a href=\"/details?show={{ show.title }}\">{{ show.title }}</a></h5>" +
-                "<h5><a href=\"/details?show={{ show.title }}&episode={{ show.season }}x{{ show.episode }}\">" +
-                    "Season: {{ show.season }}  |  Episode: {{ show.episode }}</a></h5>" +
+                "<h5><a href=\"/details?show=" + info["title"] + "\">" + info["title"] + "</a></h5>" +
+                "<h5><a href=\"/details?show=" + info["title"] + "&episode=" + info["season"] + "x" + info["episode_nro"] + "\">" +
+                    "Season: " + info["season"] + "  |  Episode: " + info["episode_nro"] + "</a></h5>" +
             "</div>" +
             "<div class=\"box border-radius-bottom\">" +
-                "<p>" +
-                    "{% if today %}" +
-                        "<span class=\"title_torrent pull-left pull-left\">TODAY</span>" +
-                    "{% else %}" +
-                        "<span class=\"title_torrent pull-left\">Next Episode</span>" +
-                        "<span class=\"number-view pull-right\"> {{ show.airdate }}</span>" +
-                    "{% endif %}" +
-                "</p>" +
-            "</div>" +
-        "</li>";
+                "<p>";
+        if(info['today']){
+            html += "<span class=\"title_torrent pull-left pull-left\">TODAY</span>";
+        }else{
+            html += "<span class=\"title_torrent pull-left\">Next Episode</span>" +
+                    "<span class=\"number-view pull-right\"> " + info["airdate"] + "</span>";
+        }
+        html += "</p></div></li>";
         $(html).appendTo("#shows_list");
-        alert(info);
+        $.pnotify({
+            title: info["title"],
+            text: 'Show info obtained!',
+            type: 'success'
+        });
+    }else{
+        $.pnotify({
+            title: 'Error!',
+            text: info['error'],
+            type: 'error'
+        });
     }
 }

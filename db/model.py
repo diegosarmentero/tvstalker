@@ -21,8 +21,6 @@ class StalkerLogin(db.Model):
         self.login_type = kw.get('login_type', None)
         if self.login_type is None:
             raise InvalidUserException(InvalidUserException.__doc__)
-        if self.login_type == 'google':
-            self.username = kw.get('user', None).nickname()
 
     def nickname(self):
         return self.username
@@ -55,6 +53,7 @@ class Episode(db.Model):
     description = db.StringProperty(multiline=True)
     airdate = db.DateProperty()
     season = db.ReferenceProperty(Season)
+    nro = db.IntegerProperty()
 
 
 class ValidateUser(db.Model):

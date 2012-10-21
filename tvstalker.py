@@ -41,6 +41,8 @@ class TvStalkerHandler(webapp.RequestHandler):
             if login is None:
                 login = model.StalkerLogin(key_name=key_name,
                     user=user, login_type='google')
+                login.username = user.nickname()
+            login.put()
             result['logout'] = users.create_logout_url(self.request.uri)
         else:
             session = get_current_session()

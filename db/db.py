@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import datetime
+
 import model
 
 
@@ -42,3 +44,37 @@ def is_show_in_db(source_url):
     if serie.count() == 0:
         return None
     return serie[0]
+
+
+def get_last_season(show):
+    season = model.Season.all()
+    season.filter('serie =', show)
+    season.filter('nro =', show.last_season)
+    if season.count() == 0:
+        return None
+    return season[0]
+
+
+def obtain_most_recent_episode(show=None, show_title=''):
+    if show is None:
+        show = get_tv_show(show_title)
+    season = get_last_season(show)
+    if season is None:
+        return None
+
+    episodes = model.Episode().all()
+    episodes.filter('season =', season)
+    episodes.filter('airdate >=', datetime.date.today())
+    episodes.order('airdate')
+    if episodes.count() == 0:
+        return None
+    return episodes[0]
+
+
+def is_already_following(user, show):
+    following = model.FollowingShows.all()
+    following.filter('login =', user)
+    following.filter('serie =', show)
+    if following.count() == 0:
+        return None
+    return following[0]
