@@ -25,6 +25,13 @@
                     <form class="form-horizontal">
                         <fieldset>
                             <div class="control-group">
+                                <label class="control-label" for="input01">Username</label>
+                                <div class="controls">
+                                    <input type="text" class="input-xlarge" id="input01">
+                                  </div>
+                            </div>
+
+                            <div class="control-group">
                                 <label class="control-label" for="input01">First Name</label>
                                 <div class="controls">
                                     <input type="text" class="input-xlarge" id="input01">
@@ -51,18 +58,20 @@
                                     <input type="text" class="input-xlarge" id="email">
                                   </div>
                             </div>
-                            <div class="control-group">
-                                <label class="control-label" for="input01">Password</label>
-                                <div class="controls">
-                                    <input type="text" class="input-xlarge" id="password">
-                                  </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label" for="input01">Confirm</label>
-                                <div class="controls">
-                                    <input type="text" class="input-xlarge" id="password">
-                                  </div>
-                            </div>
+                            {% if is_stalker_user %}
+                                <div class="control-group">
+                                    <label class="control-label" for="input01">Password</label>
+                                    <div class="controls">
+                                        <input type="text" class="input-xlarge" id="password">
+                                      </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label" for="input01">Confirm</label>
+                                    <div class="controls">
+                                        <input type="text" class="input-xlarge" id="password">
+                                      </div>
+                                </div>
+                            {% endif %}
 
                               <div class="form-actions border-rd4">
                                   <button type="submit" class="btn btn-primary">Save changes</button>

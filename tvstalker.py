@@ -70,6 +70,8 @@ class TvStalkerHandler(webapp.RequestHandler):
                     user=user, login_type='google')
                 login.username = user.nickname()
             login.put()
+            if login.login_type == 'stalker':
+                result['is_stalker_user'] = True
             result['logout'] = users.create_logout_url(self.request.uri)
         else:
             session = get_current_session()
@@ -98,7 +100,9 @@ class TvStalkerHandler(webapp.RequestHandler):
         for follow in following:
             episode = db.obtain_most_recent_episode(follow.serie)
             display = DisplayShow(follow.serie, episode)
-            shows.append(display)
+            if data['filter'] != 'today' or (
+               data['filter'] == 'today' and display.today):
+                shows.append(display)
         data['shows'] = shows
         path = os.path.join(os.path.dirname(__file__),
             "templates/index.html")
@@ -248,6 +252,8 @@ class AboutPage(TvStalkerHandler):
 class MainPage(TvStalkerHandler):
     def get(self):
         result = self.user_login()
+        filter_option = cgi.escape(self.request.get('shows'))
+        result['filter'] = filter_option
         if result['user'] is None:
             self.go_to_login()
         else:
