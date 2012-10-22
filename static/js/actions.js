@@ -86,10 +86,6 @@ function updateShows(info){
         html = "<li class=\"span3\">" +
             "<div class=\"thumbnail border-radius-top\">" +
                 "<div class=\"bg-thumbnail-img\">" +
-                    "<a class=\"overlay\" href=\"#\">" +
-                        "<img src=\"static/img/icons/play.png\">" +
-                        "<p>" + info["episode_title"] + "</p>" +
-                    "</a>" +
                     "<img class=\"border-radius-top\" src=\"" + info["image_url"] + "\">" +
                 "</div>" +
                 "<h5><a href=\"/details?show=" + info["title"] + "\">" + info["title"] + "</a></h5>" +

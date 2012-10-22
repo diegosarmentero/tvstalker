@@ -1,12 +1,13 @@
 # -*- coding: utf-8 *-*
 import os
 import cgi
+import datetime
 import hashlib
 import uuid
 
 from google.appengine.api import users
-#from google.appengine.api import files
-#from google.appengine.api import images
+from google.appengine.api import files
+from google.appengine.api import images
 from google.appengine.api import mail
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
@@ -28,6 +29,32 @@ providers = {
 def get_twitter_message(message):
     return (u'https://twitter.com/intent/tweet?text=%s' %
         message.replace(' ', '+'))
+
+
+class DisplayShow(object):
+
+    def __init__(self, show, episode):
+        self.title = show.title
+        url = images.get_serving_url(files.blobstore.get_blob_key(
+            show.image_name))
+        self.image = url
+        self.season = show.last_season
+        if episode is not None:
+            self.episode_title = episode.title
+            self.episode = episode.nro
+            if episode.airdate == datetime.date.today():
+                self.today = True
+            else:
+                self.today = False
+                date = "%s %i, %i" % (
+                    episode.airdate.strftime('%B')[:3],
+                    episode.airdate.day, episode.airdate.year)
+                self.airdate = date
+        else:
+            self.episode_title = 'N/A'
+            self.episode = 'N/A'
+            self.today = False
+            self.airdate = 'N/A'
 
 
 class TvStalkerHandler(webapp.RequestHandler):
@@ -66,9 +93,13 @@ class TvStalkerHandler(webapp.RequestHandler):
         self.redirect(url)
 
     def go_to_home(self, data):
-        #url = images.get_serving_url(files.blobstore.get_blob_key(
-            #serie.image_name))
-        #result['image_key'] = url
+        following = db.get_user_shows(data['user'])
+        shows = []
+        for follow in following:
+            episode = db.obtain_most_recent_episode(follow.serie)
+            display = DisplayShow(follow.serie, episode)
+            shows.append(display)
+        data['shows'] = shows
         path = os.path.join(os.path.dirname(__file__),
             "templates/index.html")
         self.response.out.write(template.render(path, data))

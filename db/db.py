@@ -13,6 +13,14 @@ def get_tv_show(title):
     return serie[0]
 
 
+def get_user_shows(user):
+    following = model.FollowingShows.all()
+    following.filter('login =', user)
+    if following.count() == 0:
+        return []
+    return following
+
+
 def check_username_is_valid(username):
     account = model.StalkerLogin.all()
     account.filter('login_type = ', 'stalker')
