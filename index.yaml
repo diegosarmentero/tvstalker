@@ -14,3 +14,8 @@ indexes:
   properties:
   - name: season
   - name: airdate
+
+- kind: Episode
+  properties:
+  - name: season
+  - name: nro

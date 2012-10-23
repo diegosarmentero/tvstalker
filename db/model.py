@@ -38,7 +38,7 @@ class Serie(db.Model):
         file_name = files.blobstore.create(
             mime_type='application/octet-stream')
         with files.open(file_name, 'a') as f:
-            f.write(urlfetch.Fetch(link).content)
+            f.write(urlfetch.Fetch(link, deadline=60).content)
         files.finalize(file_name)
         self.image_name = file_name
 
