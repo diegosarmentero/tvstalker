@@ -23,7 +23,6 @@ def get_user_shows(user):
 
 def check_username_is_valid(username):
     account = model.StalkerLogin.all()
-    account.filter('login_type = ', 'stalker')
     account.filter('username = ', username)
     if account.count() == 0:
         return (True and username.isalnum())
@@ -63,6 +62,21 @@ def get_last_season(show):
     return season[0]
 
 
+def get_episodes_for_season(season):
+    episodes = model.Episode.all()
+    episodes.filter('season =', season)
+    return episodes
+
+
+def get_episodes_for_season_and_nro(season, nro):
+    episodes = model.Episode.all()
+    episodes.filter('season =', season)
+    episodes.filter('nro =', nro)
+    if episodes.count() == 0:
+        return None
+    return episodes[0]
+
+
 def obtain_most_recent_episode(show=None, show_title=''):
     if show is None:
         show = get_tv_show(show_title)
@@ -86,3 +100,11 @@ def is_already_following(user, show):
     if following.count() == 0:
         return None
     return following[0]
+
+
+def get_profile(user):
+    profile = model.User.all()
+    profile.filter('login =', user)
+    if profile.count() == 0:
+        return None
+    return profile[0]

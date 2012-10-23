@@ -32,6 +32,7 @@ class RPCMethods(object):
                     return data
                 # Search for recent episode
                 episode = db.obtain_most_recent_episode(show)
+                data['name'] = show.name
                 data['title'] = show.title
                 url = images.get_serving_url(files.blobstore.get_blob_key(
                     show.image_name))

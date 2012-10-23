@@ -998,3 +998,8 @@ code {
 .error-style {
     color:#FF5335;
 }
+
+.success-style {
+    font-size:18px;
+    color:#2c97e3;
+}

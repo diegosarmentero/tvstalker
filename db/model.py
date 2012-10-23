@@ -50,7 +50,7 @@ class Season(db.Model):
 
 class Episode(db.Model):
     title = db.StringProperty()
-    description = db.StringProperty(multiline=True)
+    description = db.TextProperty()
     airdate = db.DateProperty()
     season = db.ReferenceProperty(Season)
     nro = db.IntegerProperty()
@@ -67,8 +67,7 @@ class User(db.Model):
     name = db.StringProperty()
     lastname = db.StringProperty()
     email = db.EmailProperty()
-    password = db.StringProperty()
-    avatar = db.BlobProperty(default=None)
+    avatar = db.StringProperty()
     login = db.ReferenceProperty(StalkerLogin)
 
 

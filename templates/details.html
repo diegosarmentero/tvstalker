@@ -1,0 +1,162 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+<div class="main">
+    <div class="container">
+        <div class="row">
+            <div class="box-wrapper span9">
+                <div class="row">
+                    <div class="box-content-widget box-video-play span9">
+                        <div class="row">
+                            <div class="title bg-title span9">
+                                <h3>{{ show.title }}  <a href="/unfollow?show={{ show.name }}" class="btn btn-red-s5">Unfollow</a></h3>
+                            </div>
+                        </div>
+                        <div class="widget">
+                            <div class="widget-content">
+                                <div class="video-play">
+                                    <a href="#"><img src="{{ image_url }}"></a>
+                                </div>
+                                <div class="widget">
+                                    <div class="widget-content">
+                                        <div class="video-play">
+                                            {{ show.description }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="box-content-widget span9">
+                        <div class="row">
+                            <div class="title bg-title span9">
+                                {% if episode_info %}
+                                    <h3>Episode: {{ episode_info.title }}</h3>
+                                {% else %}
+                                    <h3>Airdate Calendar</h3>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="widget">
+                            <div class="widget-content-pd">
+                            {% if episode_info %}
+                                <h3>Description</h3>
+                                <p>{{ episode_info.description }}</p>
+                                <h3>Season</h3>
+                                <p>{{ episode_info.season.nro }}</p>
+                                <h3>Episode</h3>
+                                <p>{{ episode_info.nro }}</p>
+                                <h3>Airdate</h3>
+                                <p>{{ episode_info.airdate }}</p>
+                            {% else %}
+                                  <table class="table table-striped table-bordered table-condensed">
+                                    <thead>
+                                      <tr>
+                                        <th>#</th>
+                                        <th>Episode Name</th>
+                                        <th>Airdate</th>
+                                      </tr>
+                                    </thead>
+
+                                    <tbody>
+                                    {% for episode in episodes %}
+                                      <tr>
+                                        <td>{{ episode.nro }}</td>
+                                        <td><a href="/details?show={{ show.name }}&episode={{ episode.season.nro }}x{{ episode.nro }}">
+                                            {{ episode.title }}</a></td>
+                                        <td>{{ episode.airdate }}</td>
+                                      </tr>
+                                    {% endfor %}
+
+                                    </tbody>
+                                  </table>
+                            {% endif %}
+                                  <!--div class="footer-table">
+                                    <div class="navigation pagination pull-right">
+                                        <ul>
+                                            <li><a href="#">←</a></li>
+                                            <li><a class="active" href="#">1</a></li>
+                                            <li><a href="#">2</a></li>
+                                            <li><a href="#">3</a></li>
+                                            <li><a href="#">→</a></li>
+                                        </ul>
+                                    </div>
+                                  </div-->
+                                </div>
+                        </div><!-- widget -->
+                    </div><!-- box-content-widget -->
+                </div><!-- row -->
+            </div><!-- end body-content -->
+
+            <div class="sidebar-content span3">
+                <div class="row">
+                    <div class="list-menu box-wrapper span3">
+                        <div class="row">
+                            <div class="title bg-title span3">
+                                <h3>List menu</h3>
+                            </div>
+                        </div>
+                        <ul class="nav nav-list">
+                            <li><a href="/"><i class="icon-home"></i>Home</a></li>
+                            {% if episode_info %}
+                                <li><a href="/details?show={{ show.name }}"><i class="icon-book"></i>Detail</a></li>
+                                <li class="active"><a href="#"><i class="icon-list"></i>Episode</a></li>
+                            {% else %}
+                                <li class="active"><a href="#"><i class="icon-book"></i>Detail</a></li>
+                            {% endif %}
+                            <!--li><a href="#"><i class="icon-list-alt"></i>List Alt Menu</a></li-->
+                        </ul>
+                    </div>
+                </div><!-- row -->
+                <div class="row">
+                    <div class="box-wrapper span3">
+                        <div class="row">
+                            <div class="title bg-title span3">
+                                <h3>Recommended</h3>
+                            </div>
+                        </div>
+                        <ul class="thumbnails thumbnails-horizontal">
+                            <li class="span3">
+                                <div class="thumbnail border-radius-top">
+                                    <div class="bg-thumbnail-img">
+                                        <img class="border-radius-top" src="static/img/shows/05.jpg">
+                                    </div>
+                                    <h5><a href="detail.html">Breaking Bad</a></h5>
+                                </div>
+                                <div class="box border-radius-bottom">
+                                    <p>
+                                        <span class="title_torrent pull-left">Next Episode</span>
+                                <span class="number-view pull-right">2013</span>
+                                    </p>
+                                </div>
+                            </li>
+                            <li class="span3">
+                                <div class="thumbnail border-radius-top">
+                                    <div class="bg-thumbnail-img">
+                                    <img class="border-radius-top" src="static/img/shows/07.jpg">
+                                    </div>
+
+                                    <h5><a href="detail.html">The Newsroom</a></h5>
+                                </div>
+                                <div class="box border-radius-bottom">
+                                    <p>
+                                        <span class="title_torrent pull-left">Next Episode</span>
+                                <span class="number-view pull-right">2013</span>
+                                    </p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div><!-- end thumbnails-style1 -->
+                </div><!-- row -->
+
+            </div><!-- end sidebar-content -->
+        </div><!-- row -->
+    </div><!-- end container -->
+</div><!-- end main -->
+
+<script type="text/javascript" src="static/js/pnotify-1.2.0/jquery.pnotify.min.js"></script>
+<link href="static/js/pnotify-1.2.0/jquery.pnotify.default.css" rel="stylesheet" type="text/css" />
+{% endblock %}

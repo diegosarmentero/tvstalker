@@ -124,7 +124,7 @@ class Imdb(object):
             airdate = airdate.text
             title = div.find('a', itemprop='name').text
             episode.title = title
-            description = div.find('a', itemprop='description')
+            description = div.find('div', itemprop='description')
             if description is not None:
                 episode.description = description.text
             real_date = self._obtain_airdate(airdate)

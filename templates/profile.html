@@ -8,9 +8,7 @@
                 <div class="row">
                     <div class="span3 user_info">
                         <ul>
-                            <li><a class="avatar" href="#"><img src="assets/img/avatar.png"></a></li>
-                            <li><a href="account.html"><i class="icon-user icon-white"></i>Profile</a></li>
-                            <li><a class="btn btn-danger" href="#"><i class="icon-envelope icon-white"></i>Send Mail</a></li>
+                            <li><a class="avatar" href="#"><img src="{{ image_url }}"></a></li>
                         </ul>
                     </div>
                 </div>
@@ -22,53 +20,59 @@
                     </li>
                 </ul>
                 <div>
-                    <form class="form-horizontal">
+                    <form class="form-horizontal" method="post">
+                        {% if error %}
+                            <label class="error-style">{{ error }}</label>
+                        {% endif %}
+                        {% if message %}
+                            <label class="success-style">{{ message }}</label>
+                        {% endif %}
                         <fieldset>
                             <div class="control-group">
                                 <label class="control-label" for="input01">Username</label>
                                 <div class="controls">
-                                    <input type="text" class="input-xlarge" id="input01">
+                                    <input type="text" class="input-xlarge" id="input01" name="username" value="{{ profile.login.username }}">
                                   </div>
                             </div>
 
                             <div class="control-group">
                                 <label class="control-label" for="input01">First Name</label>
                                 <div class="controls">
-                                    <input type="text" class="input-xlarge" id="input01">
+                                    <input type="text" class="input-xlarge" id="input01" name="name" value="{{ profile.name }}">
                                   </div>
                             </div>
 
                             <div class="control-group">
                                 <label class="control-label" for="input01">Last Name</label>
                                 <div class="controls">
-                                    <input type="text" class="input-xlarge" id="input01">
+                                    <input type="text" class="input-xlarge" id="input01" name="lastname" value="{{ profile.lastname }}">
                                   </div>
                             </div>
 
                             <div class="control-group">
                                 <label class="control-label" for="fileInput">Change avatar</label>
                                 <div class="controls">
-                                  <input class="file" id="fileInput" type="file">
+                                  <input class="file" id="fileInput" type="file" name="image">
                                 </div>
                               </div>
 
                             <div class="control-group">
                                 <label class="control-label" for="input01">Email Address</label>
                                 <div class="controls">
-                                    <input type="text" class="input-xlarge" id="email">
+                                    <input type="text" class="input-xlarge" id="email" name="email" value="{{ profile.email }}">
                                   </div>
                             </div>
                             {% if is_stalker_user %}
                                 <div class="control-group">
                                     <label class="control-label" for="input01">Password</label>
                                     <div class="controls">
-                                        <input type="text" class="input-xlarge" id="password">
+                                        <input type="password" class="input-xlarge" id="password" name="password" >
                                       </div>
                                 </div>
                                 <div class="control-group">
                                     <label class="control-label" for="input01">Confirm</label>
                                     <div class="controls">
-                                        <input type="text" class="input-xlarge" id="password">
+                                        <input type="password" class="input-xlarge" id="password" name="confirm">
                                       </div>
                                 </div>
                             {% endif %}

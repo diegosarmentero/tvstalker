@@ -88,8 +88,8 @@ function updateShows(info){
                 "<div class=\"bg-thumbnail-img\">" +
                     "<img class=\"border-radius-top\" src=\"" + info["image_url"] + "\">" +
                 "</div>" +
-                "<h5><a href=\"/details?show=" + info["title"] + "\">" + info["title"] + "</a></h5>" +
-                "<h5><a href=\"/details?show=" + info["title"] + "&episode=" + info["season"] + "x" + info["episode_nro"] + "\">" +
+                "<h5><a href=\"/details?show=" + info["name"] + "\">" + info["title"] + "</a></h5>" +
+                "<h5><a href=\"/details?show=" + info["name"] + "&episode=" + info["season"] + "x" + info["episode_nro"] + "\">" +
                     "Season: " + info["season"] + "  |  Episode: " + info["episode_nro"] + "</a></h5>" +
             "</div>" +
             "<div class=\"box border-radius-bottom\">" +

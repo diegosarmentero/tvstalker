@@ -31,9 +31,18 @@ def get_twitter_message(message):
         message.replace(' ', '+'))
 
 
+class InvalidUsername(Exception):
+    """Invalid Password Exception."""
+
+
+class InvalidPassword(Exception):
+    """Invalid Password Exception."""
+
+
 class DisplayShow(object):
 
     def __init__(self, show, episode):
+        self.name = show.name
         self.title = show.title
         url = images.get_serving_url(files.blobstore.get_blob_key(
             show.image_name))
@@ -119,12 +128,80 @@ class NotFoundPageHandler(TvStalkerHandler):
 class ProfilePage(TvStalkerHandler):
     def get(self):
         result = self.user_login()
+        message = cgi.escape(self.request.get('message'))
+        error = cgi.escape(self.request.get('error'))
+        if error:
+            result['error'] = error
+        else:
+            result['message'] = message
+        profile = db.get_profile(result['user'])
+        if profile is not None:
+            result['profile'] = profile
+            if profile.avatar:
+                url = images.get_serving_url(files.blobstore.get_blob_key(
+                    profile.avatar))
+                result['image_url'] = url
         if result['user'] is None:
             self.go_to_login()
         else:
             path = os.path.join(os.path.dirname(__file__),
                 "templates/profile.html")
             self.response.out.write(template.render(path, result))
+
+    def post(self):
+        result = self.user_login()
+        try:
+            login = result['user']
+            username = cgi.escape(self.request.get('username'))
+            name = cgi.escape(self.request.get('name'))
+            lastname = cgi.escape(self.request.get('lastname'))
+            #image = self.request.get('image')
+            email = cgi.escape(self.request.get('email'))
+            password = cgi.escape(self.request.get('password'))
+            confirm = cgi.escape(self.request.get('confirm'))
+            # Check that the proper fields are valid (password and confirm)
+            if username != login.username:
+                valid = db.check_username_is_valid(username)
+                if not valid:
+                    raise InvalidUsername()
+            if password != confirm:
+                raise Exception("Invalid Password")
+            profile = db.get_profile(result['user'])
+            if profile is None:
+                profile = model.User()
+            # Search for login and update username
+            # Update password in login
+            password = hashlib.sha512(password).hexdigest()
+            login.username = username
+            if login.login_type == 'stalker':
+                login.access_token_key = password
+            login.put()
+            profile.login = login
+            profile.name = name
+            profile.lastname = lastname
+            profile.email = email
+            # Save Avatar
+            #file_name = files.blobstore.create(
+                #mime_type='application/octet-stream')
+            #with files.open(file_name, 'a') as f:
+                #f.write(str(image))
+            #files.finalize(file_name)
+            #profile.avatar = file_name
+            profile.put()
+            # Update Session
+            stalker_user = 'stalker:%s' % username
+            session = get_current_session()
+            session["stalker_user"] = stalker_user
+            session["stalker_request_key"] = password
+        except InvalidUsername:
+            self.redirect('/profile?error=%s' %
+                "Invalid Username or already taken")
+        except InvalidPassword:
+            self.redirect('/profile?error=%s' % "Password don't match'")
+        #except Exception, reason:
+            #self.redirect('/profile?error=%s' % str(reason))
+        else:
+            self.redirect('/profile?message=%s' % "Profile Updated!")
 
 
 class SettingsPage(TvStalkerHandler):
@@ -249,6 +326,51 @@ class AboutPage(TvStalkerHandler):
         self.response.out.write(template.render(path, result))
 
 
+class UnfollowPage(TvStalkerHandler):
+    def get(self):
+        result = self.user_login()
+        show_name = cgi.escape(self.request.get('show'))
+        if result['user'] is None:
+            self.go_to_login()
+        else:
+            show = db.get_tv_show(show_name)
+            following = db.is_already_following(result['user'], show)
+            following.delete()
+            self.redirect('/')
+
+
+class DetailsPage(TvStalkerHandler):
+    def get(self):
+        result = self.user_login()
+        show_name = cgi.escape(self.request.get('show'))
+        episode = cgi.escape(self.request.get('episode'))
+        if result['user'] is None:
+            self.go_to_login()
+        else:
+            show = db.get_tv_show(show_name)
+            result['show'] = show
+            url = images.get_serving_url(files.blobstore.get_blob_key(
+                show.image_name))
+            result['image_url'] = url
+            # Get episodes
+            season = db.get_last_season(show)
+            # Check if it is detail or episode info
+            if episode:
+                nro = episode.split('x')[1]
+                if nro.isdigit():
+                    nro = int(nro)
+                else:
+                    nro = 1
+                episode_info = db.get_episodes_for_season_and_nro(season, nro)
+                result['episode_info'] = episode_info
+            else:
+                episodes = db.get_episodes_for_season(season)
+                result['episodes'] = episodes
+            path = os.path.join(os.path.dirname(__file__),
+                "templates/details.html")
+            self.response.out.write(template.render(path, result))
+
+
 class MainPage(TvStalkerHandler):
     def get(self):
         result = self.user_login()
@@ -260,6 +382,32 @@ class MainPage(TvStalkerHandler):
             self.go_to_home(result)
 
 
+class ReportPage(TvStalkerHandler):
+    def get(self):
+        result = self.user_login()
+        if result['user'] is None:
+            self.go_to_login()
+        else:
+            path = os.path.join(os.path.dirname(__file__),
+                "templates/report.html")
+            self.response.out.write(template.render(path, result))
+
+    def post(self):
+        result = self.user_login()
+        if result['user'] is None:
+            self.go_to_login()
+        else:
+            bug = cgi.escape(self.request.get('bug'))
+            self.notify_bug(bug, result['user'])
+            self.redirect('/')
+
+    def notify_bug(self, message, user):
+        mailFrom = "notifications@tvstalker.tv"
+        body = "From: %s\n%s" % (user.username, message)
+        mail.send_mail(mailFrom, "diegosarmentero@tvstalker.tv",
+            "Tv Stalker Bug", body)
+
+
 def main():
     application = webapp.WSGIApplication([
         ('/', MainPage),
@@ -269,6 +417,9 @@ def main():
         ('/login', LoginPage),
         ('/validate', ValidatePage),
         ('/about', AboutPage),
+        ('/details', DetailsPage),
+        ('/unfollow', UnfollowPage),
+        ('/report', ReportPage),
         ('/.*', NotFoundPageHandler),
         ], debug=True)
     run_wsgi_app(application)
