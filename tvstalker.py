@@ -403,7 +403,7 @@ class ReportPage(TvStalkerHandler):
     def notify_bug(self, message, user):
         mailFrom = "notifications@tvstalker.tv"
         body = "From: %s\n%s" % (user.username, message)
-        mail.send_mail(mailFrom, "diego.sarmentero@tvstalker.tv",
+        mail.send_mail(mailFrom, "diegosarmentero@tvstalker.tv",
             "Tv Stalker Bug", body)
 
 
