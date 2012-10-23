@@ -4,13 +4,14 @@ import os
 import difflib
 import datetime
 
+from google.appengine.api import urlfetch
+
 from BeautifulSoup import BeautifulSoup
 
 from db import (
     db,
     model,
 )
-import browser
 
 
 MONTHS = {}
@@ -30,7 +31,6 @@ class Imdb(object):
     query = 'http://www.imdb.com/find?q=%s&s=tt'
 
     def __init__(self):
-        self._browser = browser.Browser()
         self.data = {}
         self.title = ''
         root_path = os.path.dirname(os.path.dirname(__file__))
@@ -39,35 +39,42 @@ class Imdb(object):
     def search(self, title):
         self.title = title.lower()
         search = self.query % self.title.replace(' ', '+')
-        page = self._browser.open(search)
-        content = page.read()
+        content = urlfetch.Fetch(search, deadline=60,
+            allow_truncated=True).content
         try:
-            start = content.index('<p><b>Popular Titles</b>')
-            end_string = '</table> </p>'
-            end = content[start:].index(end_string) + len(end_string)
-            content = content[start:start + end]
             soup = BeautifulSoup(content)
-            table = soup.find('table')
-            link = table.find('a')['href']
-            self._load_show_data(link)
+            if soup.link['href'] == 'http://www.imdb.com/find':
+                start = content.index('<p><b>Popular Titles</b>')
+                end_string = '</table> </p>'
+                end = content[start:].index(end_string) + len(end_string)
+                content = content[start:start + end]
+                soup = BeautifulSoup(content)
+                table = soup.find('table')
+                link = table.find('a')['href']
+                self._load_show_data(link)
+            else:
+                link = soup.find('link', rel='canonical')['href']
+                self._load_show_data(link, soup)
         except ValueError:
             #do something
             pass
         return self.title
 
-    def _load_show_data(self, link):
-        link = self.imdb_link % link
-        show = db.is_show_in_db(link)
-        if show:
-            self.title = show.name
-            return
-        page = self._browser.open(link)
-        content = page.read()
-        soup = BeautifulSoup(content)
+    def _load_show_data(self, link, soup=None):
+        if soup is None:
+            link = self.imdb_link % link
+            show = db.is_show_in_db(link)
+            if show:
+                self.title = show.name
+                return
+            content = urlfetch.Fetch(link, deadline=60,
+                allow_truncated=True).content
+            soup = BeautifulSoup(content)
         show_title = soup.title.text[:soup.title.text.find(
             '(')].strip().lower()
         ratio = difflib.SequenceMatcher(None, self.title, show_title).ratio()
-        if (ratio < 0.85 or 'tv serie' not in soup.title.text.lower()):
+        matching_name = (ratio < 0.85) and (self.title not in show_title)
+        if matching_name or ('tv serie' not in soup.title.text.lower()):
             raise NotGoodMatchException(self.title)
 
         div = soup.find('div', id="title-overview-widget")
@@ -85,8 +92,8 @@ class Imdb(object):
 
     def _load_calendar(self, serie, link):
         episodes_link = link + 'episodes'
-        page = self._browser.open(episodes_link)
-        content = page.read()
+        content = urlfetch.Fetch(episodes_link, deadline=60,
+            allow_truncated=True).content
         soup = BeautifulSoup(content)
         season_list = soup.find('select', id='bySeason')
         values = season_list.findAll('option')
