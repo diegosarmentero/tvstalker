@@ -314,7 +314,6 @@ class LoginPage(TvStalkerHandler):
         session = get_current_session()
         session["stalker_user"] = stalker_user
         session["stalker_request_key"] = password
-        result = self.user_login()
         self.redirect('/')
 
 
@@ -404,7 +403,7 @@ class ReportPage(TvStalkerHandler):
     def notify_bug(self, message, user):
         mailFrom = "notifications@tvstalker.tv"
         body = "From: %s\n%s" % (user.username, message)
-        mail.send_mail(mailFrom, "diegosarmentero@tvstalker.tv",
+        mail.send_mail(mailFrom, "diego.sarmentero@tvstalker.tv",
             "Tv Stalker Bug", body)
 
 
