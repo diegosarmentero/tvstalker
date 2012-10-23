@@ -315,7 +315,7 @@ class LoginPage(TvStalkerHandler):
         session["stalker_user"] = stalker_user
         session["stalker_request_key"] = password
         result = self.user_login()
-        self.go_to_home(result)
+        self.redirect('/')
 
 
 class AboutPage(TvStalkerHandler):
