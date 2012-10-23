@@ -65,6 +65,7 @@ def get_last_season(show):
 def get_episodes_for_season(season):
     episodes = model.Episode.all()
     episodes.filter('season =', season)
+    episodes.order('nro')
     return episodes
 
 
