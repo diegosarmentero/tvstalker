@@ -109,3 +109,19 @@ def get_profile(user):
     if profile.count() == 0:
         return None
     return profile[0]
+
+
+def check_email_is_valid(email):
+    profile = model.User.all()
+    profile.filter('email =', email)
+    if profile.count() == 0:
+        return True
+    return False
+
+
+def is_valid_email_reset(email):
+    profile = model.User.all()
+    profile.filter('email =', email)
+    if profile.count() == 0:
+        return None
+    return profile[0]

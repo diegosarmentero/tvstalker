@@ -166,6 +166,9 @@ class ProfilePage(TvStalkerHandler):
                     raise InvalidUsername()
             if password != confirm:
                 raise Exception("Invalid Password")
+            valid_email = db.check_email_is_valid(email)
+            if not valid_email:
+                raise Exception("E-mail already in use.")
             profile = db.get_profile(result['user'])
             if profile is None:
                 profile = model.User()
@@ -198,8 +201,8 @@ class ProfilePage(TvStalkerHandler):
                 "Invalid Username or already taken")
         except InvalidPassword:
             self.redirect('/profile?error=%s' % "Password don't match'")
-        #except Exception, reason:
-            #self.redirect('/profile?error=%s' % str(reason))
+        except Exception, reason:
+            self.redirect('/profile?error=%s' % str(reason))
         else:
             self.redirect('/profile?message=%s' % "Profile Updated!")
 
@@ -213,6 +216,79 @@ class SettingsPage(TvStalkerHandler):
             path = os.path.join(os.path.dirname(__file__),
                 "templates/setting.html")
             self.response.out.write(template.render(path, result))
+
+
+class ForgotPasswordPage(TvStalkerHandler):
+    def get(self):
+        data = {'message': 'Enter your e-mail address:'}
+        error = cgi.escape(self.request.get('error'))
+        if error:
+            data['error'] = error
+        path = os.path.join(os.path.dirname(__file__),
+            "templates/forgot_password.html")
+        self.response.out.write(template.render(path, data))
+
+    def post(self):
+        email = cgi.escape(self.request.get('email'))
+        activation = cgi.escape(self.request.get('activation'))
+        password = cgi.escape(self.request.get('password'))
+        confirm = cgi.escape(self.request.get('confirm'))
+        if not activation:
+            self.start_validation(email)
+        else:
+            self.check_validation(email, activation, password, confirm)
+
+    def start_validation(self, email):
+        if not email or not db.is_valid_email_reset(email):
+            self.redirect('/forgot_password?error=%s' %
+                'Invalid e-mail address')
+            return
+        code = str(uuid.uuid4())
+        self.send_validate_email(email, code)
+        data = {'message': 'Enter your reset code:',
+            'email': email, 'activation': True}
+        path = os.path.join(os.path.dirname(__file__),
+            "templates/forgot_password.html")
+        self.response.out.write(template.render(path, data))
+
+    def send_validate_email(self, email, code):
+        profile = db.is_valid_email_reset(email)
+        if profile:
+            db.clean_previous_activation(email)
+            validate = model.ValidateUser()
+            validate.username = profile.login.username
+            validate.email = email
+            validate.validate_code = code
+            validate.put()
+        mailFrom = "notifications@tvstalker.tv"
+        subject = "Reset Account"
+        body = "This is your reset code: %s" % code
+        mail.send_mail(mailFrom, email, subject, body)
+
+    def check_validation(self, email, code, password, confirm):
+        if password != confirm:
+            self.redirect('/forgot_password?error=%s' % "Password don't match")
+            return
+        password = hashlib.sha512(password).hexdigest()
+        validate = db.get_activation_account(email, code)
+        if validate is not None:
+            key_name = 'stalker:%s' % validate.username
+            login = model.StalkerLogin.get_by_key_name(key_name)
+            if login:
+                login = model.StalkerLogin(key_name=key_name,
+                    login_type='stalker')
+            login.access_token_key = password
+            login.username = validate.username
+            login.put()
+            user = model.User()
+            user.email = email
+            user.login = login
+            user.put()
+            validate.delete()
+            self.go_to_login()
+        else:
+            # Activation not found
+            self.redirect('/forgot_password?error=%s' % 'Invalid reset code')
 
 
 class ValidatePage(TvStalkerHandler):
@@ -238,7 +314,6 @@ class ValidatePage(TvStalkerHandler):
             login.put()
             user = model.User()
             user.email = email
-            user.password = validate.password
             user.login = login
             user.put()
             validate.delete()
@@ -419,6 +494,7 @@ def main():
         ('/details', DetailsPage),
         ('/unfollow', UnfollowPage),
         ('/report', ReportPage),
+        ('/forgot_password', ForgotPasswordPage),
         ('/.*', NotFoundPageHandler),
         ], debug=True)
     run_wsgi_app(application)
