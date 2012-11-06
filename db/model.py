@@ -74,3 +74,8 @@ class User(db.Model):
 class FollowingShows(db.Model):
     login = db.ReferenceProperty(StalkerLogin)
     serie = db.ReferenceProperty(Serie)
+
+
+class PublishedImages(db.Model):
+    image_name = db.StringProperty()
+    url = db.StringProperty()

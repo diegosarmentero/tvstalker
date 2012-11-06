@@ -25,6 +25,66 @@ providers = {
     'google': 'www.google.com/accounts/o8/id',
 }
 
+DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday',
+        'sunday']
+
+
+def _load_today_episodes(data):
+    shows = []
+    today = datetime.date.today()
+    episodes = db.get_user_shows_by_date(data['user'], today)
+    for episode in episodes:
+        display = DisplayShow(episode.season.serie, episode)
+        shows.append(display)
+    return shows
+
+
+def _load_yesterday_episodes(data):
+    shows = []
+    yesterday = datetime.date.today() - datetime.timedelta(days=1)
+    episodes = db.get_user_shows_by_date(data['user'], yesterday)
+    for episode in episodes:
+        display = DisplayShow(episode.season.serie, episode)
+        shows.append(display)
+    return shows
+
+
+def _load_day_episode(data):
+    date = datetime.date.today()
+    day = DAYS.index(date.strftime("%A").lower()) + 1
+    offset = DAYS.index(data['filter']) + 1
+    difference = day - offset
+    shows = []
+    weekday = datetime.date.today() - datetime.timedelta(days=difference)
+    episodes = db.get_user_shows_by_date(data['user'], weekday)
+    for episode in episodes:
+        display = DisplayShow(episode.season.serie, episode)
+        shows.append(display)
+    return shows
+
+
+def _load_all_episodes(data):
+    shows = []
+    following = db.get_user_shows(data['user'])
+    for follow in following:
+        episode = db.obtain_most_recent_episode(follow.serie)
+        display = DisplayShow(follow.serie, episode)
+        shows.append(display)
+    return shows
+
+
+LOAD_FUNCTION = {
+    'today': _load_today_episodes,
+    'yesterday': _load_yesterday_episodes,
+    'monday': _load_day_episode,
+    'tuesday': _load_day_episode,
+    'wednesday': _load_day_episode,
+    'thursday': _load_day_episode,
+    'friday': _load_day_episode,
+    'saturday': _load_day_episode,
+    'sunday': _load_day_episode,
+}
+
 
 def get_twitter_message(message):
     return (u'https://twitter.com/intent/tweet?text=%s' %
@@ -44,8 +104,14 @@ class DisplayShow(object):
     def __init__(self, show, episode):
         self.name = show.name
         self.title = show.title
-        url = images.get_serving_url(files.blobstore.get_blob_key(
-            show.image_name))
+        url = db.get_image_url(show.image_name)
+        if url is None:
+            url = images.get_serving_url(files.blobstore.get_blob_key(
+                show.image_name))
+            published = model.PublishedImages()
+            published.image_name = show.image_name
+            published.url = url
+            published.put()
         self.image = url
         self.season = show.last_season
         if episode is not None:
@@ -104,14 +170,7 @@ class TvStalkerHandler(webapp.RequestHandler):
         self.redirect(url)
 
     def go_to_home(self, data):
-        following = db.get_user_shows(data['user'])
-        shows = []
-        for follow in following:
-            episode = db.obtain_most_recent_episode(follow.serie)
-            display = DisplayShow(follow.serie, episode)
-            if data['filter'] != 'today' or (
-               data['filter'] == 'today' and display.today):
-                shows.append(display)
+        shows = LOAD_FUNCTION.get(data['filter'], _load_all_episodes)(data)
         data['shows'] = shows
         path = os.path.join(os.path.dirname(__file__),
             "templates/index.html")
@@ -449,6 +508,12 @@ class MainPage(TvStalkerHandler):
     def get(self):
         result = self.user_login()
         filter_option = cgi.escape(self.request.get('shows'))
+        if not filter_option:
+            session = get_current_session()
+            filter_option = session.get("filter")
+        else:
+            session = get_current_session()
+            session["filter"] = filter_option
         result['filter'] = filter_option
         if result['user'] is None:
             self.go_to_login()

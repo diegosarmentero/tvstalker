@@ -21,6 +21,26 @@ def get_user_shows(user):
     return following
 
 
+def get_user_shows_by_date(user, date):
+    following = model.FollowingShows.all()
+    following.filter('login =', user)
+    if following.count() == 0:
+        return []
+
+    user_shows = []
+    for follow in following:
+        season = get_last_season(follow.serie)
+        if season is None:
+            continue
+
+        episodes = model.Episode().all()
+        episodes.filter('season =', season)
+        episodes.filter('airdate =', date)
+        if episodes.count() != 0:
+            user_shows.append(episodes[0])
+    return user_shows
+
+
 def check_username_is_valid(username):
     account = model.StalkerLogin.all()
     account.filter('username = ', username)
@@ -125,3 +145,11 @@ def is_valid_email_reset(email):
     if profile.count() == 0:
         return None
     return profile[0]
+
+
+def get_image_url(image_name):
+    published = model.PublishedImages.all()
+    published.filter('image_name =', image_name)
+    if published.count() == 0:
+        return None
+    return published[0].url
