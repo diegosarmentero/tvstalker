@@ -30,7 +30,7 @@ class Serie(db.Model):
     name = db.StringProperty()
     title = db.StringProperty()
     description = db.StringProperty(multiline=True)
-    image_name = db.StringProperty()
+    image_name = db.StringProperty(default='')
     last_season = db.IntegerProperty()
     source_url = db.StringProperty()
 

@@ -3,6 +3,7 @@
 import os
 import difflib
 import datetime
+import urllib2
 
 from google.appengine.api import urlfetch
 
@@ -36,6 +37,37 @@ class Imdb(object):
         root_path = os.path.dirname(os.path.dirname(__file__))
         self.download_path = os.path.join(root_path, 'static', 'img', 'shows')
 
+    def _search_popular(self, content):
+        show_found = False
+        try:
+            start = content.index('<p><b>Popular Titles</b>')
+            end_string = '</table> </p>'
+            end = content[start:].index(end_string) + len(end_string)
+            soup = BeautifulSoup(content[start:start + end])
+            table = soup.find('table')
+            for a in table.findAll('a'):
+                link = a['href']
+                show_found = self._load_show_data(link)
+                if show_found:
+                    break
+        except:
+            pass
+        return show_found
+
+    def _search_exact_match(self, content):
+        show_found = False
+        start = content.index('<p><b>Titles (Exact Matches)</b>')
+        end_string = '</table> </p>'
+        end = content[start:].index(end_string) + len(end_string)
+        soup = BeautifulSoup(content[start:start + end])
+        table = soup.find('table')
+        for a in table.findAll('a'):
+            link = a['href']
+            show_found = self._load_show_data(link)
+            if show_found:
+                break
+        return show_found
+
     def search(self, title):
         self.title = title.lower()
         search = self.query % self.title.replace(' ', '+')
@@ -44,51 +76,57 @@ class Imdb(object):
         try:
             soup = BeautifulSoup(content)
             if soup.link['href'] == 'http://www.imdb.com/find':
-                start = content.index('<p><b>Popular Titles</b>')
-                end_string = '</table> </p>'
-                end = content[start:].index(end_string) + len(end_string)
-                content = content[start:start + end]
-                soup = BeautifulSoup(content)
-                table = soup.find('table')
-                link = table.find('a')['href']
-                self._load_show_data(link)
+                show_found = self._search_popular(content)
+                if not show_found:
+                    show_found = self._search_exact_match(content)
+                if not show_found:
+                    raise NotGoodMatchException(self.title)
             else:
                 link = soup.find('link', rel='canonical')['href']
-                self._load_show_data(link, soup)
+                self._load_show_data(link, soup, True)
         except ValueError:
             #do something
             pass
         return self.title
 
-    def _load_show_data(self, link, soup=None):
+    def _load_show_data(self, link, soup=None, direct=False):
         if soup is None:
             link = self.imdb_link % link
             show = db.is_show_in_db(link)
             if show:
                 self.title = show.name
-                return
+                return True
             content = urlfetch.Fetch(link, deadline=60,
                 allow_truncated=True).content
             soup = BeautifulSoup(content)
-        show_title = soup.title.text[:soup.title.text.find(
+        page = urllib2.urlopen(link)
+        content = page.read(7000)
+        title_show = content[content.find('<title>') + 7:
+            content.find('</title>') + 8]
+        show_title = title_show[:title_show.find(
             '(')].strip().lower()
-        ratio = difflib.SequenceMatcher(None, self.title, show_title).ratio()
-        matching_name = (ratio < 0.85) and (self.title not in show_title)
-        if matching_name or ('tv serie' not in soup.title.text.lower()):
-            raise NotGoodMatchException(self.title)
+        if not direct:
+            ratio = difflib.SequenceMatcher(None,
+                self.title, show_title).ratio()
+            matching_name = (ratio < 0.85) and (self.title not in show_title)
+            if matching_name or ('tv serie' not in soup.title.text.lower()):
+                return False
 
         div = soup.find('div', id="title-overview-widget")
-        self.data['image_link'] = div.find('img')['src']
+        img = div.find('img')
         self.data['description'] = div.find('p', itemprop='description').text
         serie = model.Serie()
         self.title = show_title
         serie.name = self.title
         serie.title = self.title.title()
         serie.description = self.data['description']
-        serie.store_image(self.data['image_link'])
+        if img:
+            self.data['image_link'] = img['src']
+            serie.store_image(self.data['image_link'])
         serie.source_url = link
         serie.put()
         self._load_calendar(serie, link)
+        return True
 
     def _load_calendar(self, serie, link):
         episodes_link = link + 'episodes'
@@ -96,6 +134,8 @@ class Imdb(object):
             allow_truncated=True).content
         soup = BeautifulSoup(content)
         season_list = soup.find('select', id='bySeason')
+        if not season_list:
+            return
         values = season_list.findAll('option')
         seasons = [int(i.text) for i in values if i and str(i.text).isdigit()]
         self.data['seasons'] = seasons

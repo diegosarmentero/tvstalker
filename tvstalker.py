@@ -104,15 +104,17 @@ class DisplayShow(object):
     def __init__(self, show, episode):
         self.name = show.name
         self.title = show.title
-        url = db.get_image_url(show.image_name)
-        if url is None:
-            url = images.get_serving_url(files.blobstore.get_blob_key(
-                show.image_name))
-            published = model.PublishedImages()
-            published.image_name = show.image_name
-            published.url = url
-            published.put()
-        self.image = url
+        self.image = ''
+        if show.image_name:
+            url = db.get_image_url(show.image_name)
+            if url is None:
+                url = images.get_serving_url(files.blobstore.get_blob_key(
+                    show.image_name))
+                published = model.PublishedImages()
+                published.image_name = show.image_name
+                published.url = url
+                published.put()
+            self.image = url
         self.season = show.last_season
         if episode is not None:
             self.episode_title = episode.title
@@ -482,8 +484,16 @@ class DetailsPage(TvStalkerHandler):
         else:
             show = db.get_tv_show(show_name)
             result['show'] = show
-            url = images.get_serving_url(files.blobstore.get_blob_key(
-                show.image_name))
+            url = ''
+            if show.image_name:
+                url = db.get_image_url(show.image_name)
+                if url is None:
+                    url = images.get_serving_url(files.blobstore.get_blob_key(
+                        show.image_name))
+                    published = model.PublishedImages()
+                    published.image_name = show.image_name
+                    published.url = url
+                    published.put()
             result['image_url'] = url
             # Get episodes
             season = db.get_last_season(show)

@@ -34,8 +34,16 @@ class RPCMethods(object):
                 episode = db.obtain_most_recent_episode(show)
                 data['name'] = show.name
                 data['title'] = show.title
-                url = images.get_serving_url(files.blobstore.get_blob_key(
-                    show.image_name))
+                url = ''
+                if show.image_name:
+                    url = db.get_image_url(show.image_name)
+                    if url is None:
+                        url = images.get_serving_url(
+                            files.blobstore.get_blob_key(show.image_name))
+                        published = model.PublishedImages()
+                        published.image_name = show.image_name
+                        published.url = url
+                        published.put()
                 data['image_url'] = url
                 data['season'] = show.last_season
                 if episode is not None:
