@@ -1,8 +1,0 @@
-cron:
-- description: daily session cleanup
-  url: /oauth/cleanup_sessions
-  schedule: every 24 hours
-
-- description: refresh published images
-  url: /refreshimages
-  schedule: every sunday of month 09:00
