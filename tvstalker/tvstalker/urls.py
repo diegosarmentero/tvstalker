@@ -3,6 +3,9 @@ import os
 from django.conf import settings
 from django.conf.urls import patterns, include, url
 
+from django.contrib import admin
+admin.autodiscover()
+
 from common import views as common_views
 
 # Uncomment the next two lines to enable the admin:
@@ -10,15 +13,13 @@ from common import views as common_views
 # admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'tvstalker.views.home', name='home'),
-    # url(r'^tvstalker/', include('tvstalker.foo.urls')),
+    # Sections
+    url(r'^about/', common_views.about, name="about"),
 
     # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
+     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     # Uncomment the next line to enable the admin:
-    # url(r'^admin/', include(admin.site.urls)),
+     url(r'^admin/', include(admin.site.urls)),
 
     # Homepage:
     url(r'^$', common_views.home, name="home"),

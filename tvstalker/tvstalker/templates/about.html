@@ -1,8 +1,9 @@
 {% extends "base/base.html" %}
+{% load staticfiles %}
 
 {% block content %}
 
-<script src="static/js/jquery.rs.slideshow.min.js"></script>
+<script src="{% static 'js/jquery.rs.slideshow.min.js' %}"></script>
 <script>
     $(document).ready(function () {
         $('#slideshow-div').rsfSlideshow();
@@ -16,7 +17,7 @@
                 <div class="row">
                     <div class="span3 user_info">
                         <ul>
-                            <li><a class="avatar" href="#"><img src="static/img/gatox.jpg"></a></li>
+                            <li><a class="avatar" href="#"><img src="{% static 'img/gatox.jpg' %}"></a></li>
                             <li><a href="mailto:diegosarmentero@tvstalker.tv" class="btn btn-danger" href="#"><i class="icon-envelope icon-white"></i>Send Mail</a></li>
                         </ul>
                     </div>
