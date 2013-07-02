@@ -6,4 +6,4 @@ from utils import render_response
 def home(request):
     """ Intro/Splash screen.
     """
-    return render_response(request, 'index.html')
+    return render_response(request, 'test.html')
