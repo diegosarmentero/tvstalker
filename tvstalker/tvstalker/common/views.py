@@ -35,3 +35,4 @@ def sign_up(request):
 @require_POST
 def rpc(request):
     print('\n\ndiegoooooooooooooooo\n\n')
+    print(request)
