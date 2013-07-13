@@ -13,7 +13,6 @@ def home(request):
 
 def about(request):
     """About Page."""
-    print('\n\ndiegoooooooooooooooo\n\n')
     return render_response(request, 'about.html')
 
 

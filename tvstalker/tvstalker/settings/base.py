@@ -4,7 +4,8 @@ import os
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-SITE_ROOT = os.path.dirname(__file__.decode('utf-8'))
+SITE_ROOT = os.path.dirname(os.path.dirname(__file__.decode('utf-8')))
+
 ADMINS = (
     ('Diego Sarmentero', 'diego.sarmentero@ninja-ide.org'),
 )
@@ -129,9 +130,9 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Uncomment the next line to enable the admin:
-     'django.contrib.admin',
+    'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
-     'django.contrib.admindocs',
+    'django.contrib.admindocs',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -179,5 +180,3 @@ LOGGING = {
 
 ACCOUNT_EMAIL_VERIFICATION = "none"
 SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
-
-from local_settings import *
