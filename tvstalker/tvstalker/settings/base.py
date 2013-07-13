@@ -130,9 +130,9 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Uncomment the next line to enable the admin:
-     'django.contrib.admin',
+    'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
-     'django.contrib.admindocs',
+    'django.contrib.admindocs',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -142,7 +142,7 @@ AUTHENTICATION_BACKENDS = (
     "allauth.account.auth_backends.AuthenticationBackend",
 )
 
-#LOGIN_URL = '/login'
+#LOGIN_URL = '/accounts/login'
 LOGIN_REDIRECT_URL = '/'
 #LOGIN_ERROR_URL = '/login-asdddddd'
 
