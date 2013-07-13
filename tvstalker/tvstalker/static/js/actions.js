@@ -4,7 +4,9 @@ function addTvShow(){
             title: 'Show: ' + $("#search_show").val(),
             text: 'Stalking for Tv Show data.\nInformation will be available soon...'
         });
-        server.AddTvShow($("#search_show").val(), updateShows);
+        //$.post("/rpc/", { name: "John", time: "2pm" } );
+        $.post("/rpc/", $("#form_search").serializeArray() );
+        //server.AddTvShow($("#search_show").val(), updateShows);
         $("#search_show").val("");
     }
 }
