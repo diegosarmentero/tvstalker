@@ -1,8 +1,11 @@
 {% extends "base/base.html" %}
+{% load staticfiles %}
+{% load url from future %}
+{% load i18n %}
 
 {% block content %}
 
-<script src="static/js/jquery.rs.slideshow.min.js"></script>
+<script src="{% static 'js/jquery.rs.slideshow.min.js' %}"></script>
 <script>
     $(document).ready(function () {
         $('#slideshow-div').rsfSlideshow();
@@ -28,29 +31,29 @@
                                 Set up an initial slide -- this provides an image for users without JavaScript
                                 -->
                                 <div class="slide-container">
-                                    <img src="static/img/shows/01.jpg"/>
+                                    <img src="{% static 'img/shows/01.jpg' %}"/>
                                 </div>
                                 <ol class="slides">
                                     <li>
-                                        <a href="static/img/shows/02.jpg"></a>
+                                        <a href="{% static 'img/shows/02.jpg' %}"></a>
                                     </li>
                                     <li>
-                                        <a href="static/img/shows/03.jpg"></a>
+                                        <a href="{% static 'img/shows/03.jpg' %}"></a>
                                     </li>
                                     <li>
-                                        <a href="static/img/shows/04.jpg"></a>
+                                        <a href="{% static 'img/shows/04.jpg' %}"></a>
                                     </li>
                                     <li>
-                                        <a href="static/img/shows/05.jpg"></a>
+                                        <a href="{% static 'img/shows/05.jpg' %}"></a>
                                     </li>
                                     <li>
-                                        <a href="static/img/shows/06.jpg"></a>
+                                        <a href="{% static 'img/shows/06.jpg' %}"></a>
                                     </li>
                                     <li>
-                                        <a href="static/img/shows/07.jpg"></a>
+                                        <a href="{% static 'img/shows/07.jpg' %}"></a>
                                     </li>
                                     <li>
-                                        <a href="static/img/shows/01.jpg"></a>
+                                        <a href="{% static 'img/shows/01.jpg' %}"></a>
                                     </li>
                                 </ol>
                             </div>
@@ -65,17 +68,9 @@
                                 <div class="header-login well">
                                     <h3>Sign Up</h3>
                                 </div>
-                                <form class="well" method="post">
-                                    {% if error %}
-                                        <label class="error-style">Invalid Username or already taken</label>
-                                    {% endif %}
-                                    <label>Email</label>
-                                    <input name="email" type="text" class="input" placeholder="email…">
-                                    <label>Username</label>
-                                    <input name="username" type="text" class="input" placeholder="username…">
-                                    <label>Password</label>
-                                    <input name="password" type="password" class="input" placeholder="password…">
-
+                                <form class="well" id="signup_form" method="post"  action="{% url 'account_signup' %}">
+                                    {% csrf_token %}
+                                    {{ form.as_p }}
                                       <input type="submit" class="btn btn-info" value="Submit">
                                 </form>
                             </div>
@@ -88,5 +83,6 @@
         </div>
     </div><!-- end container -->
 </div><!-- end main -->
+<br><br>
 
 {% endblock %}

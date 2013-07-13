@@ -11,18 +11,6 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '',                      # Or path to database file if using sqlite3.
-        # The following settings are not used with sqlite3:
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'PORT': '',                      # Set to empty string for default.
-    }
-}
-
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = []
@@ -85,14 +73,18 @@ STATICFILES_FINDERS = (
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = 'j4%u5!07=b$5_banm)1u5!g#(mvkf@-t$=tz^kstm=(bd7l5p)'
-
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
     'django.template.loaders.eggs.Loader',
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.request",
+    "allauth.account.context_processors.account",
+    "allauth.socialaccount.context_processors.socialaccount",
 )
 
 MIDDLEWARE_CLASSES = (
@@ -111,7 +103,8 @@ ROOT_URLCONF = 'tvstalker.urls'
 WSGI_APPLICATION = 'tvstalker.wsgi.application'
 
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
+    # Put strings here, like "/home/html/django_templates"
+    # or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(SITE_ROOT, 'templates'),
@@ -119,6 +112,16 @@ TEMPLATE_DIRS = (
 
 INSTALLED_APPS = (
     'tvstalker',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    # Include the providers you want to enable:
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.openid',
+    'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.persona',
+    'allauth.socialaccount.providers.twitter',
+    # -----------------------------------------
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -130,6 +133,18 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
      'django.contrib.admindocs',
 )
+
+AUTHENTICATION_BACKENDS = (
+    # Needed to login by username in Django admin, regardless of `allauth`
+    "django.contrib.auth.backends.ModelBackend",
+    # `allauth` specific authentication methods, such as login by e-mail
+    "allauth.account.auth_backends.AuthenticationBackend",
+)
+
+LOGIN_URL = '/login'
+LOGIN_REDIRECT_URL = '/'
+#LOGIN_ERROR_URL = '/login-asdddddd'
+
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -159,3 +174,10 @@ LOGGING = {
         },
     }
 }
+
+SITE_ID = 2
+
+ACCOUNT_EMAIL_VERIFICATION = "none"
+SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
+
+from local_settings import *

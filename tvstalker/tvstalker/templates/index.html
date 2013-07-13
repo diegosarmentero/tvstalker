@@ -1,5 +1,6 @@
 {% extends "base/base.html" %}
 {% load staticfiles %}
+{% load url from future %}
 
 {% block content %}
 <div class="main">
@@ -27,16 +28,16 @@
                                 <b class="caret"></b>
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a href="/?shows=all"><i class="icon-tag"></i>All Shows</a></li>
-                                <li><a href="/?shows=today"><i class="icon-list"></i>Today airdate</a></li>
-                                <li><a href="/?shows=yesterday"><i class="icon-list"></i>Yesterday</a></li>
-                                <li><a href="/?shows=monday"><i class="icon-calendar"></i>Monday</a></li>
-                                <li><a href="/?shows=tuesday"><i class="icon-calendar"></i>Tuesday</a></li>
-                                <li><a href="/?shows=wednesday"><i class="icon-calendar"></i>Wednesday</a></li>
-                                <li><a href="/?shows=thursday"><i class="icon-calendar"></i>Thursday</a></li>
-                                <li><a href="/?shows=friday"><i class="icon-calendar"></i>Friday</a></li>
-                                <li><a href="/?shows=saturday"><i class="icon-calendar"></i>Saturday</a></li>
-                                <li><a href="/?shows=sunday"><i class="icon-calendar"></i>Sunday</a></li>
+                                <li><a href="{% url 'home' %}?shows=all"><i class="icon-tag"></i>All Shows</a></li>
+                                <li><a href="{% url 'home' %}?shows=today"><i class="icon-list"></i>Today airdate</a></li>
+                                <li><a href="{% url 'home' %}?shows=yesterday"><i class="icon-list"></i>Yesterday</a></li>
+                                <li><a href="{% url 'home' %}?shows=monday"><i class="icon-calendar"></i>Monday</a></li>
+                                <li><a href="{% url 'home' %}?shows=tuesday"><i class="icon-calendar"></i>Tuesday</a></li>
+                                <li><a href="{% url 'home' %}?shows=wednesday"><i class="icon-calendar"></i>Wednesday</a></li>
+                                <li><a href="{% url 'home' %}?shows=thursday"><i class="icon-calendar"></i>Thursday</a></li>
+                                <li><a href="{% url 'home' %}?shows=friday"><i class="icon-calendar"></i>Friday</a></li>
+                                <li><a href="{% url 'home' %}?shows=saturday"><i class="icon-calendar"></i>Saturday</a></li>
+                                <li><a href="{% url 'home' %}?shows=sunday"><i class="icon-calendar"></i>Sunday</a></li>
                             </ul>
                         </div>
                     </div><!-- end title -->
@@ -93,7 +94,7 @@
                                 <!--a class="overlay" href="#">
                                     <img src="static/img/icons/play.png">
                                 </a-->
-                                <img class="border-radius-top" src="static/img/shows/05.jpg">
+                                <img class="border-radius-top" src="{% static 'img/shows/05.jpg' %}">
                             </div>
                             <div class="thumbnail-content-left">
                                 <h5><a href="/details?show=breaking+bad">Breaking Bad</a></h5>
@@ -115,7 +116,7 @@
                                 <!--a class="overlay" href="#">
                                     <img src="static/img/icons/play.png">
                                 </a-->
-                                <img class="border-radius-top" src="static/img/shows/07.jpg">
+                                <img class="border-radius-top" src="{% static 'img/shows/07.jpg' %}">
                             </div>
                             <div class="thumbnail-content-left">
                                 <h5><a href="/details?show=the+newsroom">The Newsroom</a></h5>
@@ -170,8 +171,8 @@
     </div><!-- end container -->
 </div><!-- end main -->
 
-<script type="text/javascript" src="static/js/pnotify-1.2.0/jquery.pnotify.min.js"></script>
-<link href="static/js/pnotify-1.2.0/jquery.pnotify.default.css" rel="stylesheet" type="text/css" />
-<script src="static/js/actions.js"></script>
-<script src="static/js/index_customization.js"></script>
+<script type="text/javascript" src="{% static 'js/pnotify-1.2.0/jquery.pnotify.min.js' %}"></script>
+<link href="{% static 'js/pnotify-1.2.0/jquery.pnotify.default.css' %}" rel="stylesheet" type="text/css" />
+<script src="{% static 'js/actions.js' %}"></script>
+<script src="{% static 'js/index_customization.js' %}"></script>
 {% endblock %}
