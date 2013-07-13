@@ -1,15 +1,17 @@
 {% extends "base/base.html" %}
 {% load staticfiles %}
 
-{% block content %}
-
+{% block scripts %}
+{{ block.super }}
 <script src="{% static 'js/jquery.rs.slideshow.min.js' %}"></script>
 <script>
-    $(document).ready(function () {
+    $(function () {
         $('#slideshow-div').rsfSlideshow();
     });
 </script>
+{% endblock scripts %}
 
+{% block content %}
 <div class="main">
     <div class="container">
         <div class="row row-login">
