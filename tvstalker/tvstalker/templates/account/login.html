@@ -1,0 +1,98 @@
+{% extends "base/base.html" %}
+{% load staticfiles %}
+{% load url from future %}
+{% load socialaccount %}
+
+{% block content %}
+
+<script src="{% static 'js/jquery.rs.slideshow.min.js' %}"></script>
+<script>
+    $(document).ready(function () {
+        $('#slideshow-div').rsfSlideshow();
+    });
+</script>
+
+<div class="main">
+    <div class="container">
+        <div class="row row-login">
+            <div class="widget">
+                    <div class="widget-content">
+                        <div class="hero-unit hero-unit2">
+                          <h1>Tv Stalker</h1>
+                          <p>Follow your Tv Shows, check the airdates, share your shows with your friends and never miss an episode again!</p>
+                        </div>
+                    </div>
+                </div>
+            <div class="span3 sidebar_content">
+                <div class="row">
+                    <div class="span3 user_info">
+                        <div id="slideshow-div" class="rs-slideshow">
+                                <!--
+                                Set up an initial slide -- this provides an image for users without JavaScript
+                                -->
+                                <div class="slide-container">
+                                    <img src="{% static 'img/shows/01.jpg' %}"/>
+                                </div>
+                                <ol class="slides">
+                                    <li>
+                                        <a href="{% static 'img/shows/02.jpg' %}"></a>
+                                    </li>
+                                    <li>
+                                        <a href="{% static 'img/shows/03.jpg' %}"></a>
+                                    </li>
+                                    <li>
+                                        <a href="{% static 'img/shows/04.jpg' %}"></a>
+                                    </li>
+                                    <li>
+                                        <a href="{% static 'img/shows/05.jpg' %}"></a>
+                                    </li>
+                                    <li>
+                                        <a href="{% static 'img/shows/06.jpg' %}"></a>
+                                    </li>
+                                    <li>
+                                        <a href="{% static 'img/shows/07.jpg' %}"></a>
+                                    </li>
+                                    <li>
+                                        <a href="{% static 'img/shows/01.jpg' %}"></a>
+                                    </li>
+                                </ol>
+                            </div>
+                    </div>
+                </div>
+            </div><!-- end sidebar_content -->
+            <div class="span9">
+                <div class="wrapper-login">
+                    <div class="container">
+                        <div class="row">
+                            <div class="login-content span4 offset4">
+                                <div class="header-login well">
+                                    <h3>Login</h3>
+                                </div>
+                                <form class="well" method="POST" action="{% url 'account_login' %}">
+                                  {% csrf_token %}
+                                  {{ form.as_p }}
+                                  {% if redirect_field_value %}
+                                  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                                  {% endif %}
+                                  <a href="{% url 'account_reset_password' %}">Forgot your password?</a><br><br>
+                                  <input type="submit" class="btn btn-info" value="Sign In">
+                                  <p class="sign-up-lg">Don't have an account? <a href="{% url 'account_signup' %}">Sign Up.</a></p>
+                                      <div class="box-wrapper box-wrapper2"></div>
+                                      Alternative Logins<br>
+                                      <a href="{% provider_login_url 'openid' openid='https://www.google.com/accounts/o8/id' next='/' %}"
+                                          class="btn btn-red-s6"><img src="{% static 'img/Google-Logo.png' %}"/>  Google Login</a>
+                                      <a href="{% provider_login_url 'twitter' method='oauth2' %}"
+                                          class="btn btn-blue-s5"><img src="{% static 'img/Twitter-Logo.png' %}"/>  Twitter Login</a>
+                                </form>
+                            </div>
+                        <div>
+                    </div>
+                </div>
+                </div>
+                <!-- end content settings -->
+            </div>
+        </div>
+    </div><!-- end container -->
+</div><!-- end main -->
+
+{% endblock %}
