@@ -112,17 +112,6 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
-    'tvstalker',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    # Include the providers you want to enable:
-    'allauth.socialaccount.providers.google',
-    'allauth.socialaccount.providers.openid',
-    'allauth.socialaccount.providers.github',
-    'allauth.socialaccount.providers.persona',
-    'allauth.socialaccount.providers.twitter',
-    # -----------------------------------------
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -133,6 +122,19 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',
+
+    'tvstalker',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    # Include the providers you want to enable:
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.openid',
+    'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.persona',
+    'allauth.socialaccount.providers.twitter',
+
+    'south',
 )
 
 AUTHENTICATION_BACKENDS = (
