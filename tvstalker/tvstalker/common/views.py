@@ -13,6 +13,7 @@ def home(request):
 
 def about(request):
     """About Page."""
+    print('\n\ndiegoooooooooooooooo\n\n')
     return render_response(request, 'about.html')
 
 
@@ -32,6 +33,7 @@ def sign_up(request):
     return render_response(request, 'sign-up.html')
 
 
-@require_POST
+#@require_POST
 def rpc(request):
     print('\n\ndiegoooooooooooooooo\n\n')
+    return render_response(request, 'sign-up.html')
