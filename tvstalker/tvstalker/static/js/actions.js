@@ -4,14 +4,13 @@ function addTvShow(){
             title: 'Show: ' + $("#search_show").val(),
             text: 'Stalking for Tv Show data.\nInformation will be available soon...'
         });
-        //$.post("/rpc/", { name: "John", time: "2pm" } );
-        $.post("/rpc/", $("#form_search").serializeArray() );
-        //server.AddTvShow($("#search_show").val(), updateShows);
+        $.post("/rpc/", $("#form_search").serializeArray(), updateShows);
         $("#search_show").val("");
     }
 }
 
 function updateShows(info){
+    alert(info['some_var_1']);
     if(!info['error']){
         if(info['do_nothing']){
             $.pnotify({
