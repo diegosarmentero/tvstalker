@@ -113,6 +113,7 @@ TEMPLATE_DIRS = (
 
 INSTALLED_APPS = (
     'tvstalker',
+    'shows',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',

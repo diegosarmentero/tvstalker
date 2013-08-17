@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from utils import render_response
+from django.http import HttpResponse
+from django.utils import simplejson
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
+
+import shows
 
 
 @login_required
@@ -34,5 +38,7 @@ def sign_up(request):
 
 @require_POST
 def rpc(request):
-    print('\n\ndiegoooooooooooooooo\n\n')
-    print(request)
+    show_data = shows.get_show(request.POST['search'])
+    data = simplejson.dumps(show_data)
+
+    return HttpResponse(data, mimetype='application/json')

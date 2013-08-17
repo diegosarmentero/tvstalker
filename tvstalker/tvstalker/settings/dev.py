@@ -14,9 +14,9 @@ INTERNAL_IPS = ('127.0.0.1',)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'tvstalker',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
+        'NAME': 'django_tv',
+        'USER': 'django_dev',
+        'PASSWORD': 'django',
     }
 }
 
