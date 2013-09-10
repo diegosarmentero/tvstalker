@@ -181,3 +181,8 @@ LOGGING = {
 
 ACCOUNT_EMAIL_VERIFICATION = "none"
 SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
+
+try:
+    from local_settings import *
+except ImportError:
+    pass
