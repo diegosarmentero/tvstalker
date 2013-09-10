@@ -17,6 +17,7 @@ urlpatterns = patterns('',
     url(r'^about/', views.about, name="about"),
     url(r'^report/', views.report, name="report"),
     url(r'^profile/', views.profile, name="profile"),
+    url(r'^details/', views.details, name="details"),
     # RPC
     url(r'^rpc/choose_show', views.choose_show, name="choose_show"),
     url(r'^rpc/', views.rpc, name="rpc"),

@@ -50,24 +50,16 @@
                         <li class="span3">
                             <div class="thumbnail border-radius-top">
                                 <div class="bg-thumbnail-img">
-                                    <a class="overlay" href="#">
-                                        <img src="static/img/icons/play.png">
-                                        <p>{{ show.episode_title }}</p>
-                                    </a>
-                                    <img class="border-radius-top" src="{{ show.image }}">
+                                    <img class="border-radius-top" src="{{ show.poster }}">
                                 </div>
-                                <h5><a href="/details?show={{ show.name }}">{{ show.title }}</a></h5>
-                                <h5><a href="/details?show={{ show.name }}&episode={{ show.season }}x{{ show.episode }}">
-                                    Season: {{ show.season }}  |  Episode: {{ show.episode }}</a></h5>
+                                <h5><a href="/details?show={{ show.showid }}">{{ show.title }}</a></h5>
+                                <h5><a href="/details?show={{ show.showid }}&season={{ show.season_nro }}&episode={{ show.episode_nro }}">
+                                    Season: {{ show.season_nro }}  |  Episode: {{ show.episode_nro }}</a></h5>
                             </div>
                             <div class="box border-radius-bottom">
                                 <p>
-                                    {% if show.today %}
-                                        <span class="title_torrent pull-left pull-left">TODAY</span>
-                                    {% else %}
-                                        <span class="title_torrent pull-left">Next Episode</span>
-                                        <span class="number-view pull-right"> {{ show.airdate }}</span>
-                                    {% endif %}
+                                    <span class="title_torrent pull-left">{{ show.next }}</span>
+                                    <span class="number-view pull-right"> {{ show.airdate }}</span>
                                 </p>
                             </div>
                         </li>
@@ -90,65 +82,26 @@
                     </div><!-- end title -->
                 </div>
                 <ul class="thumbnails thumbnails-vertical">
+                    {% for show in recommended %}
                     <li class="span5">
                         <div class="thumbnail border-radius-top">
                             <div class="bg-thumbnail-img">
-                                <!--a class="overlay" href="#">
-                                    <img src="static/img/icons/play.png">
-                                </a-->
-                                <img class="border-radius-top" src="{% static 'img/shows/05.jpg' %}">
+                                <img class="border-radius-top" width="200" src="{{ show.poster }}">
                             </div>
                             <div class="thumbnail-content-left">
-                                <h5><a href="/details?show=breaking+bad">Breaking Bad</a></h5>
-                                <p>
-                                    Informed he has terminal cancer, an underachieving chemistry genius turned high school teacher uses his expertise to secretly provide for his family by producing the world's highest quality crystal meth.
-                                </p>
+                                <h5><a href="/details?show={{ show.showid }}">{{ show.title }}</a></h5>
+                                <p>{{ show.overview }}</p>
                             </div>
                         </div>
                         <div class="box border-radius-bottom">
                             <p>
-                                <span class="title_torrent pull-left">Next Episode</span>
-                                <span class="number-view pull-right">2013</span>
+                                <span class="title_torrent pull-left">{{ show.next }}</span>
+                                <span class="number-view pull-right">{{ show.airdate }}</span>
                             </p>
                         </div>
                     </li>
-                    <li class="span5">
-                        <div class="thumbnail border-radius-top">
-                            <div class="bg-thumbnail-img">
-                                <!--a class="overlay" href="#">
-                                    <img src="static/img/icons/play.png">
-                                </a-->
-                                <img class="border-radius-top" src="{% static 'img/shows/07.jpg' %}">
-                            </div>
-                            <div class="thumbnail-content-left">
-                                <h5><a href="/details?show=the+newsroom">The Newsroom</a></h5>
-                                <p>
-                                    A news anchor has found a safe niche with his cable show, "News Night", but his life is stirred up when he is forced to work with a new team of colleagues.
-                                </p>
-                            </div>
-                        </div>
-                        <div class="box border-radius-bottom">
-                            <p>
-                                <span class="title_torrent pull-left">Next Episode</span>
-                                <span class="number-view pull-right">2013</span>
-                            </p>
-                        </div>
-                    </li>
-
+                    {% endfor %}
                 </ul>
-                <!--div class="row">
-                    <div class="span10">
-                        <div class="navigation pagination pull-right">
-                            <ul>
-                                <li><a href="#">←</a></li>
-                                <li><a class="active" href="#">1</a></li>
-                                <li><a href="#">2</a></li>
-                                <li><a href="#">3</a></li>
-                                <li><a href="#">→</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div-->
             </div><!-- end  -->
             <div class="row">
                 <div class="list-menu box-wrapper span2">
@@ -158,12 +111,10 @@
                         </div>
                     </div>
                     <ul class="nav nav-list">
-                        <li class="active"><a href="#"><i class="icon-list-alt"></i>Most viewed</a></li>
-<!--
                         <li class="active"><a href="index.html"><i class="icon-list-alt"></i>Most rated</a></li>
+                        <li><a href="#"><i class="icon-list-alt"></i>Most viewed</a></li>
                         <li><a href="#"><i class="icon-list-alt"></i>By Friends</a></li>
                         <li><a href="#"><i class="icon-list-alt"></i>By Genre</a></li>
--->
                     </ul>
                 </div>
             </div><!-- row -->

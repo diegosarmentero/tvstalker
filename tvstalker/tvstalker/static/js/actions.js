@@ -60,7 +60,7 @@ function updateShows(info){
                 text: 'Already following!',
                 type: 'success'
             });
-            //return;
+            return;
         }
         $("#not_following").html("")
         var content = TEMPLATE_SHOW.format(info["poster"], info["showid"],

@@ -1,4 +1,6 @@
 {% extends "base/base.html" %}
+{% load staticfiles %}
+{% load url from future %}
 
 {% block content %}
 <div class="main">
@@ -9,18 +11,22 @@
                     <div class="box-content-widget box-video-play span9">
                         <div class="row">
                             <div class="title bg-title span9">
-                                <h3>{{ show.title }}  <a href="/unfollow?show={{ show.name }}" class="btn btn-red-s5">Unfollow</a></h3>
+                                {% if following %}
+                                    <h3>{{ title }}  <a href="/details?unfollow={{ showid }}&show={{ showid }}" class="btn btn-red-s5">Unfollow</a></h3>
+                                {% else %}
+                                    <h3>{{ title }}  <a href="/details?follow={{ showid }}&show={{ showid }}" class="btn btn-green-s5">Follow</a></h3>
+                                {% endif %}
                             </div>
                         </div>
                         <div class="widget">
                             <div class="widget-content">
                                 <div class="video-play">
-                                    <a href="#"><img src="{{ image_url }}"></a>
+                                    <a href="#"><img src="{{ poster }}"></a>
                                 </div>
                                 <div class="widget">
                                     <div class="widget-content">
                                         <div class="video-play">
-                                            {{ show.description }}
+                                            {{ overview }}
                                         </div>
                                     </div>
                                 </div>
@@ -34,7 +40,7 @@
                         <div class="row">
                             <div class="title bg-title span9">
                                 {% if episode_info %}
-                                    <h3>Episode: {{ episode_info.title }}</h3>
+                                    <h3>Episode: {{ episode_info.name }}</h3>
                                 {% else %}
                                     <h3>Airdate Calendar</h3>
                                 {% endif %}
@@ -44,48 +50,54 @@
                             <div class="widget-content-pd">
                             {% if episode_info %}
                                 <h3>Description</h3>
-                                <p>{{ episode_info.description }}</p>
+                                <p>{{ episode_info.overview }}</p>
                                 <h3>Season</h3>
-                                <p>{{ episode_info.season.nro }}</p>
+                                <p>{{ episode_info.season }}</p>
                                 <h3>Episode</h3>
                                 <p>{{ episode_info.nro }}</p>
                                 <h3>Airdate</h3>
                                 <p>{{ episode_info.airdate }}</p>
                             {% else %}
-                                <table class="table table-striped table-bordered table-condensed">
-                                    <thead>
-                                      <tr>
-                                        <th>#</th>
-                                        <th>Episode Name</th>
-                                        <th>Airdate</th>
-                                      </tr>
-                                    </thead>
+                                {% for season in seasons %}
+                                    <div class="seasons" style="display: none;">
+                                    <h3>Season: {{ season.0 }}</h3>
+                                    <table class="table table-striped table-bordered table-condensed">
+                                        <thead>
+                                          <tr>
+                                            <th>#</th>
+                                            <th>Episode Name</th>
+                                            <th>Airdate</th>
+                                          </tr>
+                                        </thead>
 
-                                    <tbody>
-                                    {% for episode in episodes %}
-                                      <tr>
-                                        <td>{{ episode.nro }}</td>
-                                        <td><a href="/details?show={{ show.name }}&episode={{ episode.season.nro }}x{{ episode.nro }}">
-                                            {{ episode.title }}</a></td>
-                                        <td>{{ episode.airdate }}</td>
-                                      </tr>
-                                    {% endfor %}
-
-                                    </tbody>
-                                </table>
+                                        <tbody>
+                                        {% for episode in season.1 %}
+                                          <tr>
+                                            <td>{{ episode.nro }}</td>
+                                            <td><a href="/details?show={{ showid }}&season={{ episode.season }}&episode={{ episode.nro }}">
+                                                {{ episode.name }}</a></td>
+                                            <td>{{ episode.airdate }}</td>
+                                          </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    </div>
+                                {% endfor %}
                             {% endif %}
 
-                              <!--div class="footer-table">
+                            {% if seasons %}
+                              <div class="footer-table">
                                 <div class="navigation pagination pull-right">
                                     <ul>
-                                        <li><a href="#">←</a></li>
-                                        <li><a class="active" href="#">1</a></li>
-                                        <li><a href="#">2</a></li>
-                                        <li><a href="#">3</a></li>
-                                        <li><a href="#">→</a></li>
+                                        <li><a onclick="jsfunction" href="javascript:previous_season()">←</a></li>
+                                        {% for season in seasons reversed %}
+                                            <li><a onclick="jsfunction" href="javascript:show_season({{ seasons|length }}-{{ forloop.counter0 }}-1)">{{ forloop.counter0 }}</a></li>
+                                        {% endfor %}
+                                        <li><a onclick="jsfunction" href="javascript:next_season()">→</a></li>
                                     </ul>
                                 </div>
-                              </div-->
+                              </div>
+                            {% endif %}
                             </div>
                         </div><!-- widget -->
                     </div><!-- box-content-widget -->
@@ -103,12 +115,11 @@
                         <ul class="nav nav-list">
                             <li><a href="/"><i class="icon-home"></i>Home</a></li>
                             {% if episode_info %}
-                                <li><a href="/details?show={{ show.name }}"><i class="icon-book"></i>Detail</a></li>
+                                <li><a href="/details?show={{ showid }}"><i class="icon-book"></i>Seasons</a></li>
                                 <li class="active"><a href="#"><i class="icon-list"></i>Episode</a></li>
                             {% else %}
-                                <li class="active"><a href="#"><i class="icon-book"></i>Detail</a></li>
+                                <li class="active"><a href="#"><i class="icon-book"></i>Seasons</a></li>
                             {% endif %}
-                            <!--li><a href="#"><i class="icon-list-alt"></i>List Alt Menu</a></li-->
                         </ul>
                     </div>
                 </div><!-- row -->
@@ -120,35 +131,22 @@
                             </div>
                         </div>
                         <ul class="thumbnails thumbnails-horizontal">
+                            {% for show in recommended %}
                             <li class="span3">
                                 <div class="thumbnail border-radius-top">
                                     <div class="bg-thumbnail-img">
-                                        <img class="border-radius-top" src="static/img/shows/05.jpg">
+                                        <img class="border-radius-top" src="{{ show.poster }}">
                                     </div>
-                                    <h5><a href="/details?show=breaking+bad">Breaking Bad</a></h5>
+                                    <h5><a href="/details?show={{ show.showid }}">{{ show.title }}</a></h5>
                                 </div>
                                 <div class="box border-radius-bottom">
                                     <p>
-                                        <span class="title_torrent pull-left">Next Episode</span>
-                                <span class="number-view pull-right">2013</span>
+                                        <span class="title_torrent pull-left">{{ show.next }}</span>
+                                        <span class="number-view pull-right">{{ show.airdate }}</span>
                                     </p>
                                 </div>
                             </li>
-                            <li class="span3">
-                                <div class="thumbnail border-radius-top">
-                                    <div class="bg-thumbnail-img">
-                                    <img class="border-radius-top" src="static/img/shows/07.jpg">
-                                    </div>
-
-                                    <h5><a href="/details?show=the+newsroom">The Newsroom</a></h5>
-                                </div>
-                                <div class="box border-radius-bottom">
-                                    <p>
-                                        <span class="title_torrent pull-left">Next Episode</span>
-                                <span class="number-view pull-right">2013</span>
-                                    </p>
-                                </div>
-                            </li>
+                            {% endfor %}
                         </ul>
                     </div><!-- end thumbnails-style1 -->
                 </div><!-- row -->
@@ -162,6 +160,7 @@
 
 {% block scripts %}
 {{ block.super }}
-<script type="text/javascript" src="static/js/pnotify-1.2.0/jquery.pnotify.min.js"></script>
-<link href="static/js/pnotify-1.2.0/jquery.pnotify.default.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="{% static 'js/pnotify-1.2.0/jquery.pnotify.min.js' %}"></script>
+<link href="{% static 'js/pnotify-1.2.0/jquery.pnotify.default.css' %}" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="{% static 'js/details.js' %}"></script>
 {% endblock scripts %}

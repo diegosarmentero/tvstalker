@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class TvDbApi(models.Model):
@@ -40,6 +41,8 @@ class Show(models.Model):
 
 class UserFollowing(models.Model):
     showid = models.IntegerField()
+    show = models.ForeignKey(Show, null=True, on_delete=models.SET_NULL)
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
 
 
 class ShowNotFound(models.Model):

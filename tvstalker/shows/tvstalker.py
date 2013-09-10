@@ -24,24 +24,29 @@ class TvStalker(object):
     def __init__(self):
         self.db = api.TVDB(TVDB_KEY, banners=True)
 
-    def get_show(self, title):
+    def get_show(self, title, user):
         search = self.db.search(title, "en")
         result = None
         if len(search) == 1:
-            result = self.parse_show(search[0], title)
+            result = self.parse_show(search[0], user, title)
         elif len(search) == 0:
             result = self.inform_error(title)
         else:
             result = self.parse_shows_results(search)
         return result
 
-    def get_show_by_id(self, showid):
+    def get_show_by_id(self, showid, user):
         show = self.db.get(showid, "en")
-        return self.parse_show(show)
+        return self.parse_show(show, user)
 
-    def parse_show(self, show, title=""):
-        #check if already follow
+    def parse_show(self, show, user, title=""):
         try:
+            data = {}
+            follow, created = models.UserFollowing.objects.get_or_create(
+                showid=show.id, user=user)
+            if not created:
+                data["do_nothing"] = True
+                return data
             show.update()
 
             # Get Show
@@ -68,27 +73,33 @@ class TvStalker(object):
                 for season in show:
                     self.save_season(season, showdb)
 
-                data = {}
                 data["poster"] = showdb.poster
                 data["showid"] = showdb.showid
                 data["title"] = showdb.title
                 self.get_episode_info_by_date(showdb, data)
-                return data
             else:
-                data = {"do_nothing": True}
                 data["poster"] = showdb.poster
                 data["showid"] = showdb.showid
                 data["title"] = showdb.title
                 self.get_episode_info_by_date(showdb, data)
-                return data
+            # Set Following
+            follow.show = showdb
+            follow.save()
+            return data
         except:
             return {"error": "Error, please try again later..."}
 
-    def get_episode_info_by_date(self, showdb, data):
+    def get_episode_info_by_date(self, showdb, data, date=None):
+        ok = False
         today = datetime.date.today()
-        result = models.Episode.objects.filter(showid=showdb.showid,
-            airdate__gte=datetime.date.today()).order_by('airdate')
+        if date is None:
+            result = models.Episode.objects.filter(showid=showdb.showid,
+                airdate__gte=today).order_by('airdate')
+        else:
+            result = models.Episode.objects.filter(showid=showdb.showid,
+                airdate=date).order_by('airdate')
         if len(result) > 0:
+            ok = True
             data["season_nro"] = result[0].season_nro
             data["episode_nro"] = result[0].nro
             if result[0].airdate == today:
@@ -119,6 +130,7 @@ class TvStalker(object):
                 data["episode_nro"] = 0
                 data["next"] = "Last Episode"
                 data["airdate"] = "Unknown"
+        return ok
 
     def parse_shows_results(self, shows):
         data = {}
@@ -139,7 +151,7 @@ class TvStalker(object):
         shownot, created = models.ShowNotFound.objects.get_or_create(name=title)
         if created:
             shownot.save()
-        return {"error": "Tv Show couldn't be found..."}
+        return {"error": "Tv Show: '%s' couldn't be found..." % title}
 
     def save_season(self, season, show):
         nro = season.season_number
