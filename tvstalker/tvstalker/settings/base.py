@@ -1,7 +1,7 @@
 # Django settings for tvstalker project.
 import os
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 SITE_ROOT = os.path.dirname(os.path.dirname(__file__.decode('utf-8')))
