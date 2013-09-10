@@ -1,0 +1,15 @@
+Source: tvstalker
+Section: unknown
+Priority: extra
+Maintainer: gatox <gatox@unknown>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.4
+Homepage: <insert the upstream URL, if relevant>
+#Vcs-Git: git://git.debian.org/collab-maint/tvstalker.git
+#Vcs-Browser: http://git.debian.org/?p=collab-maint/tvstalker.git;a=summary
+
+Package: tvstalker
+Architecture: all
+Depends: ${misc:Depends},qtdeclarative5-qtquick2-plugin,qtdeclarative5-ubuntu-ui-toolkit-plugin|qt-components-ubuntu,${shlibs:Depends},qmlscene
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>

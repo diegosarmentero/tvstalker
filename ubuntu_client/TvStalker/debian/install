@@ -1,0 +1,11 @@
+Makefile /usr/share/tvstalker
+components /usr/share/tvstalker
+components/Login.qml /usr/share/tvstalker
+components/Tile.qml /usr/share/tvstalker
+components/Home.qml /usr/share/tvstalker
+components/Base.qml /usr/share/tvstalker
+TvStalker.qml /usr/share/tvstalker
+TvStalker.qmlproject /usr/share/tvstalker
+img /usr/share/tvstalker
+img/unnamed.jpg /usr/share/tvstalker
+TvStalker.desktop /usr/share/applications

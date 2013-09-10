@@ -1,0 +1,22 @@
+ dpkg-buildpackage -rfakeroot -d -us -uc -i -I -S -sa -nc
+dpkg-buildpackage: source package tvstalker
+dpkg-buildpackage: source version 0.1
+dpkg-buildpackage: source changed by gatox <gatox@unknown>
+ dpkg-source -i -I --before-build TvStalker
+dpkg-buildpackage: warning: building a source package without cleaning up as you asked; it might contain undesired files
+ dpkg-source -i -I -b TvStalker
+dpkg-source: info: using source format `3.0 (native)'
+dpkg-source: info: building tvstalker in tvstalker_0.1.tar.gz
+dpkg-source: info: building tvstalker in tvstalker_0.1.dsc
+ dpkg-genchanges -S -sa >../tvstalker_0.1_source.changes
+dpkg-genchanges: including full source code in upload
+ dpkg-source -i -I --after-build TvStalker
+dpkg-buildpackage: source only upload: Debian-native package
+Now running lintian...
+E: tvstalker changes: bad-distribution-in-changes-file unstable
+E: tvstalker changes: changed-by-address-malformed gatox <gatox@unknown>
+E: tvstalker source: temporary-debhelper-file tvstalker.debhelper.log
+E: tvstalker source: maintainer-address-malformed gatox <gatox@unknown>
+W: tvstalker source: superfluous-clutter-in-homepage <insert the upstream URL, if relevant>
+W: tvstalker source: bad-homepage <insert the upstream URL, if relevant>
+Finished running lintian.
