@@ -451,7 +451,6 @@ Base {
                     console.log("diego")
                 }
 
-
                 onItemRemoved: {
                     suggestionModel.remove(index);
                 }

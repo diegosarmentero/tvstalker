@@ -1,16 +1,29 @@
+String.prototype.format = function() {
+    var s = this,
+        i = arguments.length;
+
+    while (i--) {
+        s = s.replace(new RegExp('\\{' + i + '\\}', 'gm'), arguments[i]);
+    }
+    return s;
+};
+
 function addTvShow(){
+    //alert("bla bla {0} asdasd {1}".format("diego", "gatox"));
     if($("#search_show").val().length > 0){
         $.pnotify({
             title: 'Show: ' + $("#search_show").val(),
             text: 'Stalking for Tv Show data.\nInformation will be available soon...'
         });
-        $.post("/rpc/", $("#form_search").serializeArray() );
+        $.post("/rpc/", $("#form_search").serializeArray(), updateShows);
         $("#search_show").val("");
     }
 }
 
 function updateShows(info){
-    if(!info['error']){
+    if(info["multiple"]) {
+        $('#feature-modal').modal('toggle');
+    } else if(!info['error']){
         if(info['do_nothing']){
             $.pnotify({
                 title: info["title"],

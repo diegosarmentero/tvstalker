@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import QtWebKit 3.0
 import Ubuntu.Components 0.1
 import "components"
 //import U1db 1.0 as U1db
@@ -41,6 +42,26 @@ MainView {
                     tabs.tabChildren = [home, friends, recommended, explore];
                 }
             }
+            /*Page {
+                WebView {
+                        id: webview
+                        url: "http://tabugame.org/accounts/login/"
+                        width: parent.width
+                        height: parent.height
+                        onNavigationRequested: {
+                            // detect URL scheme prefix, most likely an external link
+                            var schemaRE = /^\w+:/;
+                            if (schemaRE.test(request.url)) {
+                                request.action = WebView.AcceptRequest;
+                            } else {
+                                request.action = WebView.IgnoreRequest;
+                                // delegate request.url here
+                            }
+                        }
+                    }
+            }*/
+
+
         }
 
         onSelectedTabIndexChanged: {
