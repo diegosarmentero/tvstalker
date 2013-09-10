@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import datetime
+
 from pytvdbapi import api
 
 from shows import models
@@ -26,7 +28,7 @@ class TvStalker(object):
         search = self.db.search(title, "en")
         result = None
         if len(search) == 1:
-            result = self.parse_show(search[0])
+            result = self.parse_show(search[0], title)
         elif len(search) == 0:
             result = self.inform_error(title)
         else:
@@ -37,33 +39,86 @@ class TvStalker(object):
         show = self.db.get(showid, "en")
         return self.parse_show(show)
 
-    def parse_show(self, show):
-        show.update()
+    def parse_show(self, show, title=""):
+        #check if already follow
+        try:
+            show.update()
 
-        # return if lastupdated is the same
+            # Get Show
+            showdb, created = models.Show.objects.get_or_create(showid=show.id)
+            if created:
+                showdb.title = show.SeriesName
+                showdb.overview = show.Overview
+                showdb.dayofweek = show.Airs_DayOfWeek
+                showdb.current = show.Status == 'Continuing'
+                if show.Rating:
+                    showdb.rated = int(show.Rating)
+                posters = [b for b in show.banner_objects
+                            if b.BannerType == "poster"]
+                if len(posters) > 0:
+                    showdb.poster = posters[0].banner_url
+                showdb.save()
+                # Genre
+                for genre in show.Genre:
+                    genredb, gcreate = models.GenreTags.objects.get_or_create(
+                        genre=genre)
+                    if gcreate:
+                        genredb.save()
+                        showdb.genre.add(genredb)
+                for season in show:
+                    self.save_season(season, showdb)
 
-        # Get Show
-        showdb, created = models.Show.objects.get_or_create(showid=show.id)
-        if created:
-            showdb.title = show.SeriesName
-            showdb.overview = show.Overview
-            showdb.dayofweek = show.Airs_DayOfWeek
-            showdb.current = show.Status == 'Continuing'
-            showdb.rated = int(show.Rating)
-            posters = [b for b in show.banner_objects
-                        if b.BannerType == "poster"]
-            if len(posters) > 0:
-                showdb.poster = posters[0].banner_url
-            showdb.save()
-            # Genre
-            for genre in show.Genre:
-                genredb, gcreate = models.GenreTags.objects.get_or_create(
-                    genre=genre)
-                if gcreate:
-                    genredb.save()
-                    showdb.genre.add(genredb)
-            for season in show:
-                self.save_season(season, showdb)
+                data = {}
+                data["poster"] = showdb.poster
+                data["showid"] = showdb.showid
+                data["title"] = showdb.title
+                self.get_episode_info_by_date(showdb, data)
+                return data
+            else:
+                data = {"do_nothing": True}
+                data["poster"] = showdb.poster
+                data["showid"] = showdb.showid
+                data["title"] = showdb.title
+                self.get_episode_info_by_date(showdb, data)
+                return data
+        except:
+            return {"error": "Error, please try again later..."}
+
+    def get_episode_info_by_date(self, showdb, data):
+        today = datetime.date.today()
+        result = models.Episode.objects.filter(showid=showdb.showid,
+            airdate__gte=datetime.date.today()).order_by('airdate')
+        if len(result) > 0:
+            data["season_nro"] = result[0].season_nro
+            data["episode_nro"] = result[0].nro
+            if result[0].airdate == today:
+                data["next"] = "TODAY"
+                data["airdate"] = ""
+            else:
+                data["next"] = "Next Episode"
+                data["airdate"] = str(result[0].airdate)
+        elif showdb.current:
+            data["season_nro"] = "tbd"
+            data["episode_nro"] = "tbd"
+            data["next"] = ""
+            data["airdate"] = ""
+        else:
+            result = models.Episode.objects.filter(
+                showid=showdb.showid).exclude(
+                    season_nro=0).order_by('-airdate')
+            if len(result) > 0:
+                data["season_nro"] = result[0].season_nro
+                data["episode_nro"] = result[0].nro
+                data["next"] = "Last Episode"
+                if result[0].airdate:
+                    data["airdate"] = str(result[0].airdate)
+                else:
+                    data["airdate"] = "Unknown"
+            else:
+                data["season_nro"] = 0
+                data["episode_nro"] = 0
+                data["next"] = "Last Episode"
+                data["airdate"] = "Unknown"
 
     def parse_shows_results(self, shows):
         data = {}

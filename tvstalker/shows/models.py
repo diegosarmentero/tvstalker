@@ -38,5 +38,9 @@ class Show(models.Model):
     seasons = models.ManyToManyField(Season, null=True)
 
 
+class UserFollowing(models.Model):
+    showid = models.IntegerField()
+
+
 class ShowNotFound(models.Model):
     name = models.CharField(max_length=200, unique=True)
