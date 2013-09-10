@@ -36,3 +36,7 @@ class Show(models.Model):
     rated = models.IntegerField(default=0)
     lastupdate = models.DateField(auto_now=True)
     seasons = models.ManyToManyField(Season, null=True)
+
+
+class ShowNotFound(models.Model):
+    name = models.CharField(max_length=200, unique=True)

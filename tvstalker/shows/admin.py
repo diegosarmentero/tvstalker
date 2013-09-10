@@ -32,8 +32,14 @@ class EpisodeAdmin(admin.ModelAdmin):
     list_filter = ('showid', 'season_nro', 'nro', 'name', 'overview', 'airdate')
 
 
+class ShowNotFoundAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    list_filter = ('name',)
+
+
 admin.site.register(models.TvDbApi, TvDbApiAdmin)
 admin.site.register(models.GenreTags, GenreTagsAdmin)
 admin.site.register(models.Show, ShowAdmin)
 admin.site.register(models.Season, SeasonAdmin)
 admin.site.register(models.Episode, EpisodeAdmin)
+admin.site.register(models.ShowNotFound, ShowNotFoundAdmin)

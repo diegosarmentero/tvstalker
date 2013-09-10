@@ -1,6 +1,9 @@
+TEMPLATE_MULTIPLE = '<li><a onclick="jsfunction" href="javascript:chooseMultiple({0})"><div><img src="{2}" width="150"><b>{1}</b></div></a></li><br>'
+
+
 String.prototype.format = function() {
     var s = this,
-        i = arguments.length;
+    i = arguments.length;
 
     while (i--) {
         s = s.replace(new RegExp('\\{' + i + '\\}', 'gm'), arguments[i]);
@@ -20,8 +23,24 @@ function addTvShow(){
     }
 }
 
+function chooseMultiple(showid) {
+    $.pnotify({
+        title: 'Checking selection...',
+        text: 'Stalking for Tv Show data.\nInformation will be available soon...'
+    });
+    $.get("/rpc/choose_show?showid=" + showid, updateShows);
+    $('#feature-modal').modal('hide');
+    $('#multiple-content').empty();
+}
+
 function updateShows(info){
     if(info["multiple"]) {
+        var content = "";
+        for(var i=0; i < info["multiple"]; i++){
+            content += TEMPLATE_MULTIPLE.format(info["shows"][i][0],
+                info["shows"][i][1], info["shows"][i][2]);
+        }
+        $(content).appendTo("#multiple-content");
         $('#feature-modal').modal('toggle');
     } else if(!info['error']){
         if(info['do_nothing']){

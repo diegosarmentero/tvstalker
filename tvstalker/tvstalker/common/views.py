@@ -42,3 +42,10 @@ def rpc(request):
     data = simplejson.dumps(show_data)
 
     return HttpResponse(data, mimetype='application/json')
+
+
+def choose_show(request):
+    show_data = shows.get_show_by_id(request.GET['showid'])
+    data = simplejson.dumps(show_data)
+
+    return HttpResponse(data, mimetype='application/json')

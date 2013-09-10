@@ -28,10 +28,14 @@ class TvStalker(object):
         if len(search) == 1:
             result = self.parse_show(search[0])
         elif len(search) == 0:
-            result = self.inform_error()
+            result = self.inform_error(title)
         else:
             result = self.parse_shows_results(search)
         return result
+
+    def get_show_by_id(self, showid):
+        show = self.db.get(showid, "en")
+        return self.parse_show(show)
 
     def parse_show(self, show):
         show.update()
@@ -62,12 +66,24 @@ class TvStalker(object):
                 self.save_season(season, showdb)
 
     def parse_shows_results(self, shows):
-        print '\n\n'
-        print len(shows)
-        print '\n\n'
-        return {"multiple": len(shows)}
+        data = {}
+        data["multiple"] = len(shows)
+        info = []
+        for show in shows:
+            show.update()
+            posters = [b for b in show.banner_objects
+                        if b.BannerType == "poster"]
+            poster = ''
+            if len(posters) > 0:
+                poster = posters[0].banner_url
+            info.append([show.id, show.SeriesName, poster])
+        data["shows"] = info
+        return data
 
-    def inform_error(self):
+    def inform_error(self, title):
+        shownot, created = models.ShowNotFound.objects.get_or_create(name=title)
+        if created:
+            shownot.save()
         return {"error": "Tv Show couldn't be found..."}
 
     def save_season(self, season, show):

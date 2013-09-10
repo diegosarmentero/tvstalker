@@ -11,4 +11,4 @@ def get_show(title):
 
 
 def get_show_by_id(showid):
-    pass
+    return tv.get_show_by_id(showid)
