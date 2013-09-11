@@ -50,7 +50,7 @@
                         <li class="span3">
                             <div class="thumbnail border-radius-top">
                                 <div class="bg-thumbnail-img">
-                                    <img class="border-radius-top" src="{{ show.poster }}">
+                                    <a href="/details?show={{ show.showid }}"><img class="border-radius-top" src="{{ show.poster }}"></a>
                                 </div>
                                 <h5><a href="/details?show={{ show.showid }}">{{ show.title }}</a></h5>
                                 <h5><a href="/details?show={{ show.showid }}&season={{ show.season_nro }}&episode={{ show.episode_nro }}">
@@ -86,10 +86,12 @@
                     <li class="span5">
                         <div class="thumbnail border-radius-top">
                             <div class="bg-thumbnail-img">
-                                <img class="border-radius-top" width="200" src="{{ show.poster }}">
+                                <a href="/details?show={{ show.showid }}"><img class="border-radius-top" width="200" src="{{ show.poster }}"></a>
                             </div>
                             <div class="thumbnail-content-left">
                                 <h5><a href="/details?show={{ show.showid }}">{{ show.title }}</a></h5>
+                                <h3>{{ title }}  <a onclick="jsfunction" href="javascript:followRecommended({{ show.showid }}, 'rated', {{ forloop.counter0 }})" class="btn btn-green-s5">Follow</a></h3>
+                                <br>
                                 <p>{{ show.overview }}</p>
                             </div>
                         </div>
@@ -102,6 +104,14 @@
                     </li>
                     {% endfor %}
                 </ul>
+<!--
+                <div class="navigation pagination pull-right">
+                    <ul>
+                        <li><a onclick="jsfunction" href="javascript:previous_season()">←</a></li>
+                        <li><a onclick="jsfunction" href="javascript:next_season()">→</a></li>
+                    </ul>
+                </div>
+-->
             </div><!-- end  -->
             <div class="row">
                 <div class="list-menu box-wrapper span2">
@@ -112,9 +122,13 @@
                     </div>
                     <ul class="nav nav-list">
                         <li class="active"><a href="index.html"><i class="icon-list-alt"></i>Most rated</a></li>
+<!--
                         <li><a href="#"><i class="icon-list-alt"></i>Most viewed</a></li>
+-->
+<!--
                         <li><a href="#"><i class="icon-list-alt"></i>By Friends</a></li>
-                        <li><a href="#"><i class="icon-list-alt"></i>By Genre</a></li>
+-->
+                        <li><a href="{% url 'genres' %}"><i class="icon-list-alt"></i>By Genre</a></li>
                     </ul>
                 </div>
             </div><!-- row -->
