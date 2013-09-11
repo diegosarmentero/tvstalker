@@ -6,10 +6,21 @@ TEMPLATE_MULTIPLE = '<li><a onclick="jsfunction" href="javascript:chooseMultiple
 // {4} episode_nro
 // {5} next_episode_txt/TODAY
 // {6} airdate/empty
-TEMPLATE_SHOW = "<li class=\"span3\"><div class=\"thumbnail border-radius-top\"><div class=\"bg-thumbnail-img\"><img class=\"border-radius-top\" src=\"{0}\"></div>" +
+TEMPLATE_SHOW = "<li class=\"span3\"><div class=\"thumbnail border-radius-top\"><div class=\"bg-thumbnail-img\"><a href='/details?show={1}'><img class=\"border-radius-top\" src=\"{0}\"></a></div>" +
                 "<h5><a href=\"/details?show={1}\">{2}</a></h5><h5><a href=\"/details?show={1}&season={3}&episode={4}\">" +
                 "Season: {3}  |  Episode: {4}</a></h5></div><div class=\"box border-radius-bottom\"><p>" +
                 "<span class=\"title_torrent pull-left\">{5}</span><span class=\"number-view pull-right\"> {6}</span></p></div></li>";
+// {0} image
+// {1} showid
+// {2} title
+// {3} overview
+// {4} next_episode_txt/TODAY
+// {5} airdate/empty
+TEMPLATE_SUGGESTION = "<li class=\"span5\"><div class=\"thumbnail border-radius-top\"><div class=\"bg-thumbnail-img\"><a href=\"/details?show={1}\">" +
+                    "<img class=\"border-radius-top\" width=\"200\" src=\"{0}\"></a></div><div class=\"thumbnail-content-left\">" +
+                    "<h5><a href=\"/details?show={1}\">{2}</a></h5><h3>{2}  <a onclick=\"jsfunction\" href=\"javascript:followRecommended({1}, 'rated', 1)\" class=\"btn btn-green-s5\">Follow</a></h3>" +
+                    "<br><p>{3}</p></div></div><div class=\"box border-radius-bottom\"><p><span class=\"title_torrent pull-left\">{4}</span>" +
+                    "<span class=\"number-view pull-right\">{5}</span></p></div></li>";
 
 
 String.prototype.format = function() {
@@ -79,4 +90,32 @@ function updateShows(info){
             type: 'error'
         });
     }
+}
+
+function followRecommended(showid, type, remove) {
+    $.pnotify({
+        title: 'Adding show...',
+        text: 'Stalking for Tv Show data.\nInformation will be available soon...'
+    });
+    $.get("/rpc/choose_show?showid=" + showid, updateSingleSuggestion);
+    $($(".thumbnails-vertical").children()[remove]).remove();
+}
+
+function updateSuggestions(info) {
+
+}
+
+function updateSingleSuggestion(info) {
+    if(!info['suggestion']) {
+        updateShows(info);
+        $.get("/rpc/get_suggestions?page=0&type=rated", updateSingleSuggestion);
+    } else {
+        addSuggestion(info['suggestion'][1]);
+    }
+}
+
+function addSuggestion(info) {
+    var content = TEMPLATE_SUGGESTION.format(info["poster"], info["showid"],
+        info["title"], info["overview"], info["next"], info["airdate"]);
+    $(content).appendTo(".thumbnails-vertical");
 }

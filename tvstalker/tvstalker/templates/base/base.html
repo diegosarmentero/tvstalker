@@ -23,9 +23,11 @@
                 <ul class="nav pull-right">
                       <li><a href="{% url 'home' %}">Home</a></li>
                       <li class="divider-vertical"></li>
+<!--
                       <li><a href="{% url 'home' %}">Friends</a></li>
                       <li class="divider-vertical"></li>
-                      <li><a href="{% url 'home' %}">Explore</a></li>
+-->
+                      <li><a href="{% url 'explore' %}">Explore</a></li>
                       <li class="divider-vertical"></li>
 
                     {% if user %}
@@ -36,6 +38,7 @@
                                 <b class="caret"></b>
                             </a>
                             <ul class="dropdown-menu">
+<!--
                                 <li>
                                     <a href="{% url 'profile' %}">
                                         <i class="icon-user"></i>
@@ -46,6 +49,7 @@
                                     <a href="{% url 'report' %}">
                                         <i class="icon-envelope"></i> Report Bug</a>
                                 </li>
+-->
                                 <li class="divider"></li>
                                 <li>
                                     <a href="{% url 'account_logout' %}"><i class="icon-off"></i> Logout</a>

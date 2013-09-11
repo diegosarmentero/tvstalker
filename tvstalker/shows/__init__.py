@@ -47,6 +47,10 @@ def get_show_info(showid):
     data['title'] = show[0].title
     data['overview'] = show[0].overview
     data['poster'] = show[0].poster
+    #print '\n\nshow infoooooooo'
+    #for g in show[0].genre:
+        #print g
+    data['genres'] = show[0].genre
     tv.get_episode_info_by_date(show[0], data)
     return data
 
@@ -113,13 +117,47 @@ def get_shows_per_user(user, shows_filter):
     return {'shows': shows}
 
 
-def get_most_rated_shows(user):
+def get_genres():
+    return sorted(models.GenreTags.objects.values_list('genre', flat=True))
+
+
+def get_shows_per_genre(genre):
+    results = models.Show.objects.all().order_by('title')
+    shows = []
+    for show in results:
+        genres = show.genre.values_list('genre', flat=True)
+        if genre in genres:
+            data = {}
+            data['showid'] = show.showid
+            data['title'] = show.title
+            data['poster'] = show.poster
+            tv.get_episode_info_by_date(show, data)
+            shows.append(data)
+    return shows
+
+
+def get_shows_per_day(day):
+    results = models.Show.objects.all().order_by('title')
+    shows = []
+    for show in results:
+        if show.dayofweek == day.title():
+            data = {}
+            data['showid'] = show.showid
+            data['title'] = show.title
+            data['poster'] = show.poster
+            tv.get_episode_info_by_date(show, data)
+            shows.append(data)
+    return shows
+
+
+def get_most_rated_shows(user, page=0):
     results = models.Show.objects.all().order_by('-rated')
     following = models.UserFollowing.objects.filter(
         user=user).values_list('showid', flat=True)
     recommended = []
+    limit = 2 + (page * 2)
     for show in results:
-        if len(recommended) == 2:
+        if len(recommended) == limit:
             break
         if show.showid not in following:
             data = {}
@@ -129,4 +167,4 @@ def get_most_rated_shows(user):
             data['poster'] = show.poster
             tv.get_episode_info_by_date(show, data)
             recommended.append(data)
-    return recommended
+    return recommended[(page * 2):]
