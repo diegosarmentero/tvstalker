@@ -1,0 +1,59 @@
+{% extends "base/base.html" %}
+{% load staticfiles %}
+{% load url from future %}
+
+{% block content %}
+<div class="main">
+    <div class="container">
+        <div class="row">
+            <div class="box-wrapper  span12">
+                <div class="row">
+                    <div class="title span12">
+                        <h3 class="pull-left">Day of Week: {{ day }}</h3>
+                    </div><!-- end title -->
+                    <div class="navigation pagination pull-left">
+                        <ul>
+                            <li><a href="{% url 'explore' %}?day=Monday">Monday</a></li>
+                            <li><a href="{% url 'explore' %}?day=Tuesday">Tuesday</a></li>
+                            <li><a href="{% url 'explore' %}?day=Wednesday">Wednesday</a></li>
+                            <li><a href="{% url 'explore' %}?day=Thursday">Thursday</a></li>
+                            <li><a href="{% url 'explore' %}?day=Friday">Friday</a></li>
+                            <li><a href="{% url 'explore' %}?day=Saturday">Saturday</a></li>
+                            <li><a href="{% url 'explore' %}?day=Sunday">Sunday</a></li>
+                        </ul>
+                    </div>
+                </div>
+            <div class="row">
+                <ul id="shows_list" class="thumbnails thumbnails-horizontal">
+                    {% for show in shows %}
+                        <li class="span3">
+                            <div class="thumbnail border-radius-top">
+                                <div class="bg-thumbnail-img">
+                                    <a href="/details?show={{ show.showid }}"><img class="border-radius-top" src="{{ show.poster }}"></a>
+                                </div>
+                                <h5><a href="/details?show={{ show.showid }}">{{ show.title }}</a></h5>
+                                <h5><a href="/details?show={{ show.showid }}&season={{ show.season_nro }}&episode={{ show.episode_nro }}">
+                                    Season: {{ show.season_nro }}  |  Episode: {{ show.episode_nro }}</a></h5>
+                            </div>
+                            <div class="box border-radius-bottom">
+                                <p>
+                                    <span class="title_torrent pull-left">{{ show.next }}</span>
+                                    <span class="number-view pull-right"> {{ show.airdate }}</span>
+                                </p>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            </div><!-- end  -->
+
+    </div><!-- end container -->
+</div><!-- end main -->
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script type="text/javascript" src="{% static 'js/pnotify-1.2.0/jquery.pnotify.min.js' %}"></script>
+<link href="{% static 'js/pnotify-1.2.0/jquery.pnotify.default.css' %}" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}">
+{% endblock scripts %}

@@ -18,8 +18,11 @@ urlpatterns = patterns('',
     url(r'^report/', views.report, name="report"),
     url(r'^profile/', views.profile, name="profile"),
     url(r'^details/', views.details, name="details"),
+    url(r'^explore/', views.explore, name="explore"),
+    url(r'^genres/', views.genres, name="genres"),
     # RPC
     url(r'^rpc/choose_show', views.choose_show, name="choose_show"),
+    url(r'^rpc/get_suggestions', views.get_suggestions, name="get_suggestions"),
     url(r'^rpc/', views.rpc, name="rpc"),
 
     # Uncomment the admin/doc line below to enable admin documentation:
