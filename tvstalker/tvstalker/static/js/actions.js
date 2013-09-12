@@ -1,3 +1,5 @@
+var CURRENT_SUGGESTION_TYPE = "rated";
+
 TEMPLATE_MULTIPLE = '<li><a onclick="jsfunction" href="javascript:chooseMultiple({0})"><div><img src="{2}" width="150"><b>{1}</b></div></a></li><br>';
 // {0} image
 // {1} showid
@@ -102,13 +104,16 @@ function followRecommended(showid, type) {
 }
 
 function updateSuggestions(info) {
-
+    $($(".thumbnails-vertical").children()[0]).remove();
+    $($(".thumbnails-vertical").children()[0]).remove();
+    addSuggestion(info['suggestion'][0]);
+    addSuggestion(info['suggestion'][1]);
 }
 
 function updateSingleSuggestion(info) {
     if(!info['suggestion']) {
         updateShows(info);
-        $.get("/rpc/get_suggestions?page=0&type=rated", updateSingleSuggestion);
+        $.get("/rpc/get_suggestions?page=0&type=" + CURRENT_SUGGESTION_TYPE, updateSingleSuggestion);
     } else {
         addSuggestion(info['suggestion'][1]);
     }
@@ -118,4 +123,18 @@ function addSuggestion(info) {
     var content = TEMPLATE_SUGGESTION.format(info["poster"], info["showid"],
         info["title"], info["overview"], info["next"], info["airdate"]);
     $(content).appendTo(".thumbnails-vertical");
+}
+
+function getMostRatedSuggestion() {
+    CURRENT_SUGGESTION_TYPE = "rated";
+    $($(".nav-list").children()[0]).attr("class", "active");
+    $($(".nav-list").children()[1]).attr("class", "not-active");
+    $.get("/rpc/get_suggestions?page=0&type=rated", updateSuggestions);
+}
+
+function getMostViewedSuggestion() {
+    CURRENT_SUGGESTION_TYPE = "viewed";
+    $($(".nav-list").children()[0]).attr("class", "not-active");
+    $($(".nav-list").children()[1]).attr("class", "active");
+    $.get("/rpc/get_suggestions?page=0&type=viewed", updateSuggestions);
 }

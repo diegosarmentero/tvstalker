@@ -2,6 +2,8 @@
 import datetime
 from datetime import timedelta
 
+from django.db.models import Count
+
 from shows import tvstalker
 from shows import models
 
@@ -166,5 +168,28 @@ def get_most_rated_shows(user, page=0):
             data['overview'] = show.overview
             data['poster'] = show.poster
             tv.get_episode_info_by_date(show, data)
+            recommended.append(data)
+    return recommended[(page * 2):]
+
+
+def get_most_viewed_shows(user, page=0):
+    results = models.UserFollowing.objects.values(
+        'showid').annotate(Count('showid')).order_by()
+    results = sorted(results, key=lambda x: x['showid__count'], reverse=True)
+    following = models.UserFollowing.objects.filter(
+        user=user).values_list('showid', flat=True)
+    recommended = []
+    limit = 2 + (page * 2)
+    for show in results:
+        if len(recommended) == limit:
+            break
+        if show['showid'] not in following:
+            showdb = models.Show.objects.get(showid=show['showid'])
+            data = {}
+            data['showid'] = showdb.showid
+            data['title'] = showdb.title
+            data['overview'] = showdb.overview
+            data['poster'] = showdb.poster
+            tv.get_episode_info_by_date(showdb, data)
             recommended.append(data)
     return recommended[(page * 2):]
