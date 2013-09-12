@@ -1,4 +1,5 @@
 var CURRENT_SUGGESTION_TYPE = "rated";
+var CURRENT_SUGGESTION_PAGE = 0;
 
 TEMPLATE_MULTIPLE = '<li><a onclick="jsfunction" href="javascript:chooseMultiple({0})"><div><img src="{2}" width="150"><b>{1}</b></div></a></li><br>';
 // {0} image
@@ -104,10 +105,18 @@ function followRecommended(showid, type) {
 }
 
 function updateSuggestions(info) {
-    $($(".thumbnails-vertical").children()[0]).remove();
-    $($(".thumbnails-vertical").children()[0]).remove();
-    addSuggestion(info['suggestion'][0]);
-    addSuggestion(info['suggestion'][1]);
+    if(info['suggestion'].length > 0) {
+        $($(".thumbnails-vertical").children()[0]).remove();
+        $($(".thumbnails-vertical").children()[0]).remove();
+        addSuggestion(info['suggestion'][0]);
+        addSuggestion(info['suggestion'][1]);
+    } else {
+        if(CURRENT_SUGGESTION_PAGE < 0) {
+            CURRENT_SUGGESTION_PAGE++;
+        } else {
+            CURRENT_SUGGESTION_PAGE--;
+        }
+    }
 }
 
 function updateSingleSuggestion(info) {
@@ -137,4 +146,14 @@ function getMostViewedSuggestion() {
     $($(".nav-list").children()[0]).attr("class", "not-active");
     $($(".nav-list").children()[1]).attr("class", "active");
     $.get("/rpc/get_suggestions?page=0&type=viewed", updateSuggestions);
+}
+
+function previous_recommendation() {
+    CURRENT_SUGGESTION_PAGE--;
+    $.get("/rpc/get_suggestions?page=" + CURRENT_SUGGESTION_PAGE + "&type=" + CURRENT_SUGGESTION_TYPE, updateSuggestions);
+}
+
+function next_recommendation() {
+    CURRENT_SUGGESTION_PAGE++;
+    $.get("/rpc/get_suggestions?page=" + CURRENT_SUGGESTION_PAGE + "&type=" + CURRENT_SUGGESTION_TYPE, updateSuggestions);
 }
