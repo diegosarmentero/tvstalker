@@ -136,6 +136,7 @@ function addSuggestion(info) {
 
 function getMostRatedSuggestion() {
     CURRENT_SUGGESTION_TYPE = "rated";
+    CURRENT_SUGGESTION_PAGE = 0;
     $($(".nav-list").children()[0]).attr("class", "active");
     $($(".nav-list").children()[1]).attr("class", "not-active");
     $.get("/rpc/get_suggestions?page=0&type=rated", updateSuggestions);
@@ -143,6 +144,7 @@ function getMostRatedSuggestion() {
 
 function getMostViewedSuggestion() {
     CURRENT_SUGGESTION_TYPE = "viewed";
+    CURRENT_SUGGESTION_PAGE = 0;
     $($(".nav-list").children()[0]).attr("class", "not-active");
     $($(".nav-list").children()[1]).attr("class", "active");
     $.get("/rpc/get_suggestions?page=0&type=viewed", updateSuggestions);
