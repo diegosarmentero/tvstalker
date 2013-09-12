@@ -123,7 +123,7 @@ def get_suggestions(request):
     if type_ == 'rated':
         results = shows.get_most_rated_shows(request.user, page)
     else:
-        results = []
+        results = shows.get_most_viewed_shows(request.user, page)
 
     response['suggestion'] = results
     data = simplejson.dumps(response)
