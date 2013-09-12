@@ -83,14 +83,14 @@
                 </div>
                 <ul class="thumbnails thumbnails-vertical">
                     {% for show in recommended %}
-                    <li class="span5">
+                    <li class="span5" id="{{ show.showid }}">
                         <div class="thumbnail border-radius-top">
                             <div class="bg-thumbnail-img">
                                 <a href="/details?show={{ show.showid }}"><img class="border-radius-top" width="200" src="{{ show.poster }}"></a>
                             </div>
                             <div class="thumbnail-content-left">
                                 <h5><a href="/details?show={{ show.showid }}">{{ show.title }}</a></h5>
-                                <h3>{{ title }}  <a onclick="jsfunction" href="javascript:followRecommended({{ show.showid }}, 'rated', {{ forloop.counter0 }})" class="btn btn-green-s5">Follow</a></h3>
+                                <h3>{{ title }}  <a onclick="jsfunction" href="javascript:followRecommended({{ show.showid }}, 'rated')" class="btn btn-green-s5">Follow</a></h3>
                                 <br>
                                 <p>{{ show.overview }}</p>
                             </div>

@@ -16,9 +16,9 @@ TEMPLATE_SHOW = "<li class=\"span3\"><div class=\"thumbnail border-radius-top\">
 // {3} overview
 // {4} next_episode_txt/TODAY
 // {5} airdate/empty
-TEMPLATE_SUGGESTION = "<li class=\"span5\"><div class=\"thumbnail border-radius-top\"><div class=\"bg-thumbnail-img\"><a href=\"/details?show={1}\">" +
+TEMPLATE_SUGGESTION = "<li class=\"span5\" id={1}><div class=\"thumbnail border-radius-top\"><div class=\"bg-thumbnail-img\"><a href=\"/details?show={1}\">" +
                     "<img class=\"border-radius-top\" width=\"200\" src=\"{0}\"></a></div><div class=\"thumbnail-content-left\">" +
-                    "<h5><a href=\"/details?show={1}\">{2}</a></h5><h3>{2}  <a onclick=\"jsfunction\" href=\"javascript:followRecommended({1}, 'rated', 1)\" class=\"btn btn-green-s5\">Follow</a></h3>" +
+                    "<h5><a href=\"/details?show={1}\">{2}</a></h5><h3>{2}  <a onclick=\"jsfunction\" href=\"javascript:followRecommended({1}, 'rated')\" class=\"btn btn-green-s5\">Follow</a></h3>" +
                     "<br><p>{3}</p></div></div><div class=\"box border-radius-bottom\"><p><span class=\"title_torrent pull-left\">{4}</span>" +
                     "<span class=\"number-view pull-right\">{5}</span></p></div></li>";
 
@@ -92,13 +92,13 @@ function updateShows(info){
     }
 }
 
-function followRecommended(showid, type, remove) {
+function followRecommended(showid, type) {
     $.pnotify({
         title: 'Adding show...',
         text: 'Stalking for Tv Show data.\nInformation will be available soon...'
     });
     $.get("/rpc/choose_show?showid=" + showid, updateSingleSuggestion);
-    $($(".thumbnails-vertical").children()[remove]).remove();
+    $($(".thumbnails-vertical").children("#" + showid)).remove();
 }
 
 function updateSuggestions(info) {
