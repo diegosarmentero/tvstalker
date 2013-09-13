@@ -20,6 +20,34 @@
         </div>
         <div class="row">
             <div class="box-wrapper  span12">
+            {% if premieres %}
+                <div class="row">
+                    <div class="title span12">
+                        <h3 class="pull-left">Shows Premiere!</h3>
+                    </div><!-- end title -->
+                </div>
+                <ul id="shows_list" class="thumbnails thumbnails-horizontal">
+                    {% for premiere in premieres %}
+                        <li class="span3">
+                            <div class="thumbnail border-radius-top">
+                                <div class="bg-thumbnail-img">
+                                    <a href="/details?show={{ premiere.showid }}"><img class="border-radius-top" src="{{ premiere.poster }}"></a>
+                                </div>
+                                <h5><a href="/details?show={{ premiere.showid }}">{{ premiere.title }}</a></h5>
+                                <h5><a href="/details?show={{ premiere.showid }}&season={{ premiere.season_nro }}&episode={{ premiere.episode_nro }}">
+                                    Season: {{ premiere.season_nro }}  |  Episode: {{ premiere.episode_nro }}</a></h5>
+                            </div>
+                            <div class="box border-radius-bottom">
+                                <p>
+                                    <span class="title_torrent pull-left">{{ premiere.next }}</span>
+                                    <span class="number-view pull-right"> {{ premiere.airdate }}</span>
+                                </p>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
                 <div class="row">
                     <div class="title span12">
                         <h3 class="pull-left">My Tv Shows!</h3>

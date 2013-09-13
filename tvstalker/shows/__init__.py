@@ -49,9 +49,6 @@ def get_show_info(showid):
     data['title'] = show[0].title
     data['overview'] = show[0].overview
     data['poster'] = show[0].poster
-    #print '\n\nshow infoooooooo'
-    #for g in show[0].genre:
-        #print g
     data['genres'] = show[0].genre
     tv.get_episode_info_by_date(show[0], data)
     return data
@@ -90,6 +87,7 @@ def get_seasons(showid):
 def get_shows_per_user(user, shows_filter):
     results = models.UserFollowing.objects.filter(user=user)
 
+    premieres = []
     shows = []
     today = datetime.date.today()
     yesterday = today - timedelta(days=1)
@@ -117,8 +115,11 @@ def get_shows_per_user(user, shows_filter):
                     continue
             else:
                 tv.get_episode_info_by_date(follow.show, data)
-            shows.append(data)
-    return {'shows': shows}
+            if data['next'] == 'TODAY' and data['episode_nro'] == 1:
+                premieres.append(data)
+            else:
+                shows.append(data)
+    return {'shows': shows, 'premieres': premieres}
 
 
 def get_genres():
