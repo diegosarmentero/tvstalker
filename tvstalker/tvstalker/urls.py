@@ -11,7 +11,6 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Login
-    url(r'^verification/', views.verification, name="verification"),
     (r'^accounts/', include('allauth.urls')),
     # Sections
     url(r'^sign_up/', views.sign_up, name="sign_up"),
