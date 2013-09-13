@@ -19,9 +19,12 @@ def home(request):
         request.session['filter'] = shows_filter
     elif request.session.get('filter', False):
         shows_filter = request.session['filter']
+    else:
+        shows_filter = 'all'
     data = shows.get_shows_per_user(request.user, shows_filter)
     most_rated = shows.get_most_rated_shows(request.user)
     data['recommended'] = most_rated
+    data['filter'] = shows_filter
     return render_response(request, 'index.html', data)
 
 
