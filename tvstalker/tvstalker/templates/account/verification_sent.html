@@ -1,0 +1,87 @@
+{% extends "base/base.html" %}
+{% load staticfiles %}
+{% load url from future %}
+{% load i18n %}
+
+{% block head_title %}{% trans "Verify Your E-mail Address" %}{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script src="{% static 'js/jquery.rs.slideshow.min.js' %}"></script>
+<script>
+    $(function () {
+        $('#slideshow-div').rsfSlideshow();
+    });
+</script>
+{% endblock scripts %}
+
+{% block content %}
+<div class="main">
+    <div class="container">
+        <div class="row row-login">
+            <div class="widget">
+                    <div class="widget-content">
+                        <div class="hero-unit hero-unit2">
+                          <h1>Tv Stalker</h1>
+                          <p>All the information about your favorite Tv Shows in one place.</p>
+                        </div>
+                    </div>
+                </div>
+            <div class="span3 sidebar_content">
+                <div class="row">
+                    <div class="span3 user_info">
+                        <div id="slideshow-div" class="rs-slideshow">
+                            <!--
+                            Set up an initial slide -- this provides an image for users without JavaScript
+                            -->
+                            <div class="slide-container">
+                                <img src="{% static 'img/shows/01.jpg' %}"/>
+                            </div>
+                            <ol class="slides">
+                                <li>
+                                    <a href="{% static 'img/shows/02.jpg' %}"></a>
+                                </li>
+                                <li>
+                                    <a href="{% static 'img/shows/03.jpg' %}"></a>
+                                </li>
+                                <li>
+                                    <a href="{% static 'img/shows/04.jpg' %}"></a>
+                                </li>
+                                <li>
+                                    <a href="{% static 'img/shows/05.jpg' %}"></a>
+                                </li>
+                                <li>
+                                    <a href="{% static 'img/shows/06.jpg' %}"></a>
+                                </li>
+                                <li>
+                                    <a href="{% static 'img/shows/07.jpg' %}"></a>
+                                </li>
+                                <li>
+                                    <a href="{% static 'img/shows/01.jpg' %}"></a>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- end sidebar_content -->
+            <div class="span9">
+                <div class="wrapper-login">
+                    <div class="container">
+                        <div class="row">
+                            <div class="login-content span4 offset4">
+                                <div class="header-login well">
+                                    <h3>{% trans "Verify Your E-mail Address" %}</h3>
+                                </div>
+
+                                <b><p>{% blocktrans %}We have sent an e-mail to <a href="mailto:{{email}}">{{ email }}</a> for verification. Follow the link provided to finalize the signup process. Please contact us if you do not receive it within a few minutes.{% endblocktrans %}</p></b>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end content settings -->
+            </div>
+        </div>
+    </div><!-- end container -->
+</div><!-- end main -->
+
+{% endblock %}
