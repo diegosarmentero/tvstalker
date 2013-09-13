@@ -97,25 +97,27 @@ def get_shows_per_user(user, shows_filter):
         if shows_filter == 'current' and not follow.show.current:
             continue
 
-        data = {}
-        data['showid'] = follow.show.showid
-        data['title'] = follow.show.title
-        data['poster'] = follow.show.poster
-        if shows_filter == 'today':
-            if not tv.get_episode_info_by_date(follow.show, data, today):
-                continue
-        elif shows_filter == 'yesterday':
-            if not tv.get_episode_info_by_date(follow.show, data, yesterday):
-                continue
-        elif shows_filter in ('monday', 'tuesday', 'wednesday', 'thursday',
-                              'friday', 'saturday', 'sunday'):
-            if follow.show.dayofweek == shows_filter.title():
-                tv.get_episode_info_by_date(follow.show, data)
+        if follow.show:
+            data = {}
+            data['showid'] = follow.show.showid
+            data['title'] = follow.show.title
+            data['poster'] = follow.show.poster
+            if shows_filter == 'today':
+                if not tv.get_episode_info_by_date(follow.show, data, today):
+                    continue
+            elif shows_filter == 'yesterday':
+                if not tv.get_episode_info_by_date(
+                   follow.show, data, yesterday):
+                    continue
+            elif shows_filter in ('monday', 'tuesday', 'wednesday', 'thursday',
+                                  'friday', 'saturday', 'sunday'):
+                if follow.show.dayofweek == shows_filter.title():
+                    tv.get_episode_info_by_date(follow.show, data)
+                else:
+                    continue
             else:
-                continue
-        else:
-            tv.get_episode_info_by_date(follow.show, data)
-        shows.append(data)
+                tv.get_episode_info_by_date(follow.show, data)
+            shows.append(data)
     return {'shows': shows}
 
 
