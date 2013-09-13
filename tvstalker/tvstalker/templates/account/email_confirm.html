@@ -2,6 +2,7 @@
 {% load staticfiles %}
 {% load url from future %}
 {% load i18n %}
+{% load account %}
 
 {% block scripts %}
 {{ block.super }}
@@ -81,7 +82,7 @@
 
                                 <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
                                 {% csrf_token %}
-                                    <button type="submit">{% trans 'Confirm' %}</button>
+                                    <input type="submit" class="btn btn-info" value="{% trans 'Confirm' %}">
                                 </form>
 
                                 {% else %}
