@@ -129,3 +129,7 @@ def get_suggestions(request):
     data = simplejson.dumps(response)
 
     return HttpResponse(data, mimetype='application/json')
+
+
+def verification(request):
+    return render_response(request, 'account/email_confirm.html')
