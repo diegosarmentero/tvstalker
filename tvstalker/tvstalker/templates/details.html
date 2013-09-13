@@ -74,6 +74,9 @@
                                             <th>#</th>
                                             <th>Episode Name</th>
                                             <th>Airdate</th>
+<!--
+                                            <th>Viewed</th>
+-->
                                           </tr>
                                         </thead>
 
@@ -84,6 +87,9 @@
                                             <td><a href="/details?show={{ showid }}&season={{ episode.season }}&episode={{ episode.nro }}">
                                                 {{ episode.name }}</a></td>
                                             <td>{{ episode.airdate }}</td>
+<!--
+                                            <td><input type="checkbox" name="option3" value="Cheese"></td>
+-->
                                           </tr>
                                         {% endfor %}
                                         </tbody>
