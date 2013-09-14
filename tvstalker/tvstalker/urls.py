@@ -27,6 +27,7 @@ urlpatterns = patterns('',
     url(r'^rpc/get_suggestions', views.get_suggestions, name="get_suggestions"),
     url(r'^rpc/guest_load', views.rpc_guest_load, name="rpc_guest_load"),
     url(r'^rpc/guest', views.rpc_guest, name="rpc_guest"),
+    url(r'^rpc/mark_as_viewed', views.mark_as_viewed, name="mark_as_viewed"),
     url(r'^rpc/', views.rpc, name="rpc"),
 
     # Uncomment the admin/doc line below to enable admin documentation:

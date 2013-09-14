@@ -26,6 +26,22 @@ function next_season() {
     }
 }
 
-function mark_as_viewed(season, episode) {
-    alert(season + " - " + episode);
+function mark_episodes(info) {
+    var season = ($(".seasons").length - 1) - current;
+    var viewed = $("#check_season" + season).is(":checked");
+    for(var i = 1; i < info + 1; i++){
+        $("#check_episode" + season + "_" + i).attr("checked", viewed);
+    }
+}
+
+function mark_as_viewed(showid, season, episode) {
+    if(episode == "all") {
+        var viewed = $("#check_season" + season).is(":checked");
+        $.get("/rpc/mark_as_viewed?showid=" + showid + "&season=" + season +
+            "&episode=" + episode + "&viewed=" + viewed, mark_episodes);
+    }else{
+        var viewed = $("#check_episode" + season + "_" + episode).is(":checked");
+        $.get("/rpc/mark_as_viewed?showid=" + showid + "&season=" + season +
+            "&episode=" + episode + "&viewed=" + viewed);
+    }
 }
