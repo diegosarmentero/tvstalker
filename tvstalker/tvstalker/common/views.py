@@ -13,6 +13,11 @@ import shows
 @login_required
 def home(request):
     """Home Page."""
+    if request.session.get('new_user', False):
+        shows_info = request.session["from_guest"]
+        for val in shows_info:
+            if val.isdigit():
+                shows.get_show_by_id(val, request.user)
     shows_filter = ''
     if 'shows' in request.GET:
         shows_filter = request.GET['shows']
@@ -26,6 +31,24 @@ def home(request):
     data['recommended'] = most_rated
     data['filter'] = shows_filter
     return render_response(request, 'index.html', data)
+
+
+def guest(request):
+    """Guest Page."""
+    shows_filter = ''
+    if 'shows' in request.GET:
+        shows_filter = request.GET['shows']
+        request.session['filter'] = shows_filter
+    elif request.session.get('filter', False):
+        shows_filter = request.session['filter']
+    else:
+        shows_filter = 'all'
+    data = {}
+    #data = shows.get_shows_per_user(request.user, shows_filter)
+    most_rated = shows.get_most_rated_shows()
+    data['recommended'] = most_rated
+    data['filter'] = shows_filter
+    return render_response(request, 'guest/guest.html', data)
 
 
 def about(request):
@@ -44,7 +67,6 @@ def profile(request):
     return render_response(request, 'profile.html')
 
 
-@login_required
 def genres(request):
     """Genre Page."""
     data = {}
@@ -87,7 +109,6 @@ def details(request):
     return render_response(request, 'details.html', data)
 
 
-@login_required
 def explore(request):
     """Explore Page."""
     data = {}
@@ -113,6 +134,29 @@ def rpc(request):
     return HttpResponse(data, mimetype='application/json')
 
 
+def rpc_guest(request):
+    following = request.GET['following'].split(",")
+    show_data = shows.get_show(request.GET['showname'], None)
+    if "showid" in show_data and str(show_data["showid"]) in following:
+        show_data = {"do_nothing": True}
+    data = simplejson.dumps(show_data)
+
+    return HttpResponse(data, mimetype='application/json')
+
+
+def rpc_guest_load(request):
+    following = request.GET['following'].split(",")
+    shows_info = []
+    for val in following:
+        if val.isdigit():
+            show_data = shows.get_show_by_id(val, None)
+            shows_info.append(show_data)
+
+    data = simplejson.dumps(shows_info)
+
+    return HttpResponse(data, mimetype='application/json')
+
+
 @login_required
 def choose_show(request):
     show_data = shows.get_show_by_id(request.GET['showid'], request.user)
@@ -121,17 +165,40 @@ def choose_show(request):
     return HttpResponse(data, mimetype='application/json')
 
 
-@login_required
+def choose_show_guest(request):
+    following = request.GET['following'].split(",")
+    show_data = shows.get_show_by_id(request.GET['showid'], None)
+    if "showid" in show_data and str(show_data["showid"]) in following:
+        show_data = {"do_nothing": True}
+    data = simplejson.dumps(show_data)
+
+    return HttpResponse(data, mimetype='application/json')
+
+
 def get_suggestions(request):
     page = int(request.GET.get('page', 0))
     type_ = request.GET.get('type', 'rated')
     response = {}
-    if type_ == 'rated':
-        results = shows.get_most_rated_shows(request.user, page)
+    if request.user.is_anonymous():
+        user = None
     else:
-        results = shows.get_most_viewed_shows(request.user, page)
+        user = request.user
+    if type_ == 'rated':
+        results = shows.get_most_rated_shows(user, page)
+    else:
+        results = shows.get_most_viewed_shows(user, page)
 
     response['suggestion'] = results
     data = simplejson.dumps(response)
 
     return HttpResponse(data, mimetype='application/json')
+
+
+def guest_login(request):
+    if request.session.get('from_guest', False):
+        print request.session["from_guest"]
+    following = request.GET.get('following', "").split(",")
+    request.session['from_guest'] = following
+    request.session['new_user'] = True
+
+    return render_response(request, 'guest/guest_login.html')

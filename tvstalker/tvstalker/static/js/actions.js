@@ -37,7 +37,6 @@ String.prototype.format = function() {
 };
 
 function addTvShow(){
-    //alert("bla bla {0} asdasd {1}".format("diego", "gatox"));
     if($("#search_show").val().length > 0){
         $.pnotify({
             title: 'Show: ' + $("#search_show").val(),

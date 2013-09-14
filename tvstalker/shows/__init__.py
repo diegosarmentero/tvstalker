@@ -155,10 +155,13 @@ def get_shows_per_day(day):
     return shows
 
 
-def get_most_rated_shows(user, page=0):
+def get_most_rated_shows(user=None, page=0):
     results = models.Show.objects.all().order_by('-rated')
-    following = models.UserFollowing.objects.filter(
-        user=user).values_list('showid', flat=True)
+    if user:
+        following = models.UserFollowing.objects.filter(
+            user=user).values_list('showid', flat=True)
+    else:
+        following = []
     recommended = []
     limit = 2 + (page * 2)
     for show in results:
