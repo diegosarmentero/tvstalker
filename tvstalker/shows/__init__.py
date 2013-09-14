@@ -66,21 +66,30 @@ def get_episodes_for_season(showid, season, episode):
     return data
 
 
-def get_seasons(showid):
+def get_seasons(showid, user):
     seasons = models.Season.objects.filter(showid=int(showid)).order_by('-nro')
     data = []
     for season in seasons:
         episodesdb = models.Episode.objects.filter(showid=int(showid),
             season_nro=season.nro).order_by('nro')
         episodes = []
+        all_viewed = True
         for episode in episodesdb:
             info = {}
             info['season'] = season.nro
             info['nro'] = episode.nro
             info['name'] = episode.name
             info['airdate'] = episode.airdate
+            vieweddb = models.UserViewedEpisodes.objects.filter(
+                showid=showid, season=season.nro, user=user,
+                episode=episode.nro)
+            if vieweddb and vieweddb[0].viewed:
+                info["viewed"] = "on"
+            else:
+                info["viewed"] = ""
+                all_viewed = False
             episodes.append(info)
-        data.append((season.nro, episodes))
+        data.append((season.nro, episodes, all_viewed))
     return data
 
 
@@ -199,3 +208,24 @@ def get_most_viewed_shows(user, page=0):
             tv.get_episode_info_by_date(showdb, data)
             recommended.append(data)
     return recommended[(page * 2):]
+
+
+def mark_as_viewed(user, showid, season, episode, viewed):
+    result = True
+    if episode == "all":
+        results = models.Episode.objects.filter(showid=showid,
+            season_nro=season)
+        for episode_obj in results:
+            vieweddb, created = models.UserViewedEpisodes.objects.get_or_create(
+                showid=showid, season=season, user=user,
+                episode=episode_obj.nro)
+            vieweddb.viewed = viewed
+            vieweddb.save()
+        result = len(results)
+    else:
+        vieweddb, created = models.UserViewedEpisodes.objects.get_or_create(
+            showid=showid, season=season, user=user, episode=episode)
+        vieweddb.viewed = viewed
+        vieweddb.save()
+
+    return result
