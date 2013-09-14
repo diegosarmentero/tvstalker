@@ -36,8 +36,11 @@ class TvStalker(object):
         return result
 
     def get_show_by_id(self, showid, user):
-        show = self.db.get(showid, "en")
-        return self.parse_show(show, user)
+        try:
+            show = self.db.get(showid, "en")
+            return self.parse_show(show, user)
+        except:
+            return {"error": "Error, please try again later..."}
 
     def parse_show(self, show, user, title=""):
         try:
@@ -133,19 +136,22 @@ class TvStalker(object):
         return ok
 
     def parse_shows_results(self, shows):
-        data = {}
-        data["multiple"] = len(shows)
-        info = []
-        for show in shows:
-            show.update()
-            posters = [b for b in show.banner_objects
-                        if b.BannerType == "poster"]
-            poster = ''
-            if len(posters) > 0:
-                poster = posters[0].banner_url
-            info.append([show.id, show.SeriesName, poster])
-        data["shows"] = info
-        return data
+        try:
+            data = {}
+            data["multiple"] = len(shows)
+            info = []
+            for show in shows:
+                show.update()
+                posters = [b for b in show.banner_objects
+                            if b.BannerType == "poster"]
+                poster = ''
+                if len(posters) > 0:
+                    poster = posters[0].banner_url
+                info.append([show.id, show.SeriesName, poster])
+            data["shows"] = info
+            return data
+        except:
+            return {"error": "Error, please try again later..."}
 
     def inform_error(self, title):
         shownot, created = models.ShowNotFound.objects.get_or_create(name=title)
