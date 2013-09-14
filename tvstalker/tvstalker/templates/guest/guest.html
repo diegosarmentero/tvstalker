@@ -1,0 +1,203 @@
+{% extends "base/base.html" %}
+{% load staticfiles %}
+{% load url from future %}
+
+{% block content %}
+<div class="main">
+    <div class="container">
+        <div class="row">
+            <div class="box-wrapper span12">
+                <div class="widget">
+                    <div class="wrapper-search">
+                        <form class="form-inline form-search border-rd4" id="form_search">
+                            {% csrf_token %}
+                            <input placeholder="Type the name of a Tv Show to follow ..." type="text" name="search" id="search_show" class="box-text"/>
+                            <a href="#" id="btn_search" class="btn-search"></a>
+                        </form>
+                    </div>
+                </div>
+            </div><!-- end box-wrapper -->
+        </div>
+        <div class="row">
+            <div class="box-wrapper span12">
+                <div class="widget">
+                    <div id="guest_user" class="widget-content">
+                        <div class="hero-unit hero-unit2">
+                          <p>Create an account to track your favorite Tv Shows and access additional features! <a onclick="jsfunction" href="javascript:createAccount()" class="btn btn-blue-s5">Create Account</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="box-wrapper  span12">
+            {% if premieres %}
+                <div class="row">
+                    <div class="title span12">
+                        <h3 class="pull-left">Shows Premiere!</h3>
+                    </div><!-- end title -->
+                </div>
+                <ul id="shows_list" class="thumbnails thumbnails-horizontal">
+                    {% for premiere in premieres %}
+                        <li class="span3">
+                            <div class="thumbnail border-radius-top">
+                                <div class="bg-thumbnail-img">
+                                    <a onclick="jsfunction" href="javascript:notLoggedInMessage()"><img class="border-radius-top" src="{{ premiere.poster }}"></a>
+                                </div>
+                                <h5><a onclick="jsfunction" href="javascript:notLoggedInMessage()">{{ premiere.title }}</a></h5>
+                                <h5><a onclick="jsfunction" href="javascript:notLoggedInMessage()">
+                                    Season: {{ premiere.season_nro }}  |  Episode: {{ premiere.episode_nro }}</a></h5>
+                            </div>
+                            <div class="box border-radius-bottom">
+                                <p>
+                                    <span class="title_torrent pull-left">{{ premiere.next }}</span>
+                                    <span class="number-view pull-right"> {{ premiere.airdate }}</span>
+                                </p>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+                <div class="row">
+                    <div class="title span12">
+                        <h3 class="pull-left">My Tv Shows!</h3>
+                        <div class="sort pull-right dropdown">
+                            <a onclick="jsfunction" href="javascript:removeCookie()">
+                                Remove Tv Shows&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                Display Shows: {{ filter }}
+                                <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{% url 'guest' %}?shows=current"><i class="icon-tag"></i>Current</a></li>
+                                <li><a href="{% url 'guest' %}?shows=all"><i class="icon-tag"></i>All Shows</a></li>
+                                <li><a href="{% url 'guest' %}?shows=today"><i class="icon-list"></i>Today airdate</a></li>
+                                <li><a href="{% url 'guest' %}?shows=yesterday"><i class="icon-list"></i>Yesterday</a></li>
+                                <li><a href="{% url 'guest' %}?shows=monday"><i class="icon-calendar"></i>Monday</a></li>
+                                <li><a href="{% url 'guest' %}?shows=tuesday"><i class="icon-calendar"></i>Tuesday</a></li>
+                                <li><a href="{% url 'guest' %}?shows=wednesday"><i class="icon-calendar"></i>Wednesday</a></li>
+                                <li><a href="{% url 'guest' %}?shows=thursday"><i class="icon-calendar"></i>Thursday</a></li>
+                                <li><a href="{% url 'guest' %}?shows=friday"><i class="icon-calendar"></i>Friday</a></li>
+                                <li><a href="{% url 'guest' %}?shows=saturday"><i class="icon-calendar"></i>Saturday</a></li>
+                                <li><a href="{% url 'guest' %}?shows=sunday"><i class="icon-calendar"></i>Sunday</a></li>
+                            </ul>
+                        </div>
+                    </div><!-- end title -->
+                </div>
+                <ul id="shows_list" class="thumbnails thumbnails-horizontal">
+                    {% if shows %}
+                    {% for show in shows %}
+                        <li class="span3">
+                            <div class="thumbnail border-radius-top">
+                                <div class="bg-thumbnail-img">
+                                    <a onclick="jsfunction" href="javascript:notLoggedInMessage()"><img class="border-radius-top" src="{{ show.poster }}"></a>
+                                </div>
+                                <h5><a onclick="jsfunction" href="javascript:notLoggedInMessage()">{{ show.title }}</a></h5>
+                                <h5><a onclick="jsfunction" href="javascript:notLoggedInMessage()">
+                                    Season: {{ show.season_nro }}  |  Episode: {{ show.episode_nro }}</a></h5>
+                            </div>
+                            <div class="box border-radius-bottom">
+                                <p>
+                                    <span class="title_torrent pull-left">{{ show.next }}</span>
+                                    <span class="number-view pull-right"> {{ show.airdate }}</span>
+                                </p>
+                            </div>
+                        </li>
+                    {% endfor %}
+                    {% else %}
+                    <div id="not_following" class="widget-content">
+                        <div class="hero-unit hero-unit2">
+                          <p>You are not following any Tv Show... What are you waiting for?!</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </ul>
+            </div><!-- end  -->
+
+            <!-- **************** start All Flie  ****************** -->
+            <div class="box-wrapper span10">
+                <div class="row">
+                    <div class="title span10">
+                        <h3 class="pull-left">Recommended Tv Shows!</h3>
+                    </div><!-- end title -->
+                </div>
+                <ul class="thumbnails thumbnails-vertical">
+                    {% for show in recommended %}
+                    <li class="span5" id="{{ show.showid }}">
+                        <div class="thumbnail border-radius-top">
+                            <div class="bg-thumbnail-img">
+                                <a onclick="jsfunction" href="javascript:notLoggedInMessage()"><img class="border-radius-top" width="200" src="{{ show.poster }}"></a>
+                            </div>
+                            <div class="thumbnail-content-left">
+                                <h4><a onclick="jsfunction" href="javascript:notLoggedInMessage()">{{ show.title }}</a></h4>
+                                <h3><a onclick="jsfunction" href="javascript:followRecommended({{ show.showid }}, 'rated')" class="btn btn-green-s5">Follow</a></h3>
+                                <br>
+                                <p>{{ show.overview }}</p>
+                            </div>
+                        </div>
+                        <div class="box border-radius-bottom">
+                            <p>
+                                <span class="title_torrent pull-left">{{ show.next }}</span>
+                                <span class="number-view pull-right">{{ show.airdate }}</span>
+                            </p>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <div class="navigation pagination pull-right">
+                    <ul>
+                        <li><a onclick="jsfunction" href="javascript:previous_recommendation()">←</a></li>
+                        <li><a onclick="jsfunction" href="javascript:next_recommendation()">→</a></li>
+                    </ul>
+                </div>
+            </div><!-- end  -->
+            <div class="row">
+                <div class="list-menu box-wrapper span2">
+                    <div class="row">
+                        <div class="title bg-title span2">
+                            <h3>Suggestions</h3>
+                        </div>
+                    </div>
+                    <ul class="nav nav-list">
+                        <li class="active"><a onclick="jsfunction" href="javascript:getMostRatedSuggestion()"><i class="icon-list-alt"></i>Most rated</a></li>
+                        <li class="not-active"><a onclick="jsfunction" href="javascript:getMostViewedSuggestion()"><i class="icon-list-alt"></i>Most viewed</a></li>
+<!--
+                        <li><a href="#"><i class="icon-list-alt"></i>By Friends</a></li>
+-->
+                        <li><a href="{% url 'genres' %}"><i class="icon-list-alt"></i>By Genre</a></li>
+                    </ul>
+                </div>
+            </div><!-- row -->
+            <!-- **************** end All File  ****************** -->
+        </div><!-- row -->
+
+    </div><!-- end container -->
+</div><!-- end main -->
+
+<div style="display: none;" class="modal hide fade" id="feature-modal">
+    <font color="black">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+        <h3>Tv Shows Results:</h3>
+    </div>
+    <div class="modal-body">
+        <ul class="unstyled" id="multiple-content">
+        </ul>
+    </div>
+    <div class="modal-footer">
+        <a data-dismiss="modal" class="btn">Close</a>
+    </div>
+    </font>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script type="text/javascript" src="{% static 'js/pnotify-1.2.0/jquery.pnotify.min.js' %}"></script>
+<link href="{% static 'js/pnotify-1.2.0/jquery.pnotify.default.css' %}" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}">
+<script src="{% static 'js/guest.js' %}"></script>
+<script src="{% static 'js/index_customization.js' %}"></script>
+{% endblock scripts %}

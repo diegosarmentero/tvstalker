@@ -25,3 +25,7 @@ function next_season() {
         $($(".seasons")[current]).attr("style", "display: inline;");
     }
 }
+
+function mark_as_viewed(season, episode) {
+    alert(season + " - " + episode);
+}

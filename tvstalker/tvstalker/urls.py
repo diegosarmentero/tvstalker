@@ -21,8 +21,12 @@ urlpatterns = patterns('',
     url(r'^explore/', views.explore, name="explore"),
     url(r'^genres/', views.genres, name="genres"),
     # RPC
+    url(r'^rpc/choose_show_guest', views.choose_show_guest,
+        name="choose_show_guest"),
     url(r'^rpc/choose_show', views.choose_show, name="choose_show"),
     url(r'^rpc/get_suggestions', views.get_suggestions, name="get_suggestions"),
+    url(r'^rpc/guest_load', views.rpc_guest_load, name="rpc_guest_load"),
+    url(r'^rpc/guest', views.rpc_guest, name="rpc_guest"),
     url(r'^rpc/', views.rpc, name="rpc"),
 
     # Uncomment the admin/doc line below to enable admin documentation:
@@ -31,5 +35,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
 
     # Homepage:
+    url(r'^guest_login/', views.guest_login, name="guest_login"),
+    url(r'^guest/', views.guest, name="guest"),
     url(r'^$', views.home, name="home"),
 )
