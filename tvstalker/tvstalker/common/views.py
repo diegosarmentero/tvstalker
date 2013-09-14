@@ -61,7 +61,7 @@ def genres(request):
 def details(request):
     """Details Page."""
     showid = request.GET.get('show', False)
-    if not showid:
+    if not showid or not showid.isdigit():
         return HttpResponseRedirect("/")
     data = shows.get_show_info(showid)
     if 'unfollow' in request.GET:
@@ -74,6 +74,9 @@ def details(request):
     if 'season' in request.GET:
         season = request.GET['season']
         episode = request.GET['episode']
+        if not season.isdigit() or not episode.isdigit():
+            season = 1
+            episode = 1
         info = shows.get_episodes_for_season(showid, season, episode)
         data['episode_info'] = info
     else:
