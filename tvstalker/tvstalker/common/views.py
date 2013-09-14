@@ -195,8 +195,6 @@ def get_suggestions(request):
 
 
 def guest_login(request):
-    if request.session.get('from_guest', False):
-        print request.session["from_guest"]
     following = request.GET.get('following', "").split(",")
     request.session['from_guest'] = following
     request.session['new_user'] = True
