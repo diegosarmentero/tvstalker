@@ -74,7 +74,11 @@
                                             <th>#</th>
                                             <th>Episode Name</th>
                                             <th>Airdate</th>
-                                            <th>Viewed <input type="checkbox" name="option3" value="all" onclick="javascript:mark_as_viewed('all', 0)"></th>
+                                            {% if season.2 %}
+                                                <th>Viewed <input type="checkbox" id="check_season{{ season.0 }}" name="option3" checked="on" onclick="javascript:mark_as_viewed({{ showid }}, {{ season.0 }}, 'all')"></th>
+                                            {% else %}
+                                                <th>Viewed <input type="checkbox" id="check_season{{ season.0 }}" name="option3" onclick="javascript:mark_as_viewed({{ showid }}, {{ season.0 }}, 'all')"></th>
+                                            {% endif %}
                                           </tr>
                                         </thead>
 
@@ -85,7 +89,11 @@
                                             <td><a href="/details?show={{ showid }}&season={{ episode.season }}&episode={{ episode.nro }}">
                                                 {{ episode.name }}</a></td>
                                             <td>{{ episode.airdate }}</td>
-                                            <td><input type="checkbox" name="option3" value="{{ episode.nro }}" onclick="javascript:mark_as_viewed({{ episode.season }}, {{ episode.nro }})"></td>
+                                            {% if episode.viewed %}
+                                                <td><input type="checkbox" name="option3" id="check_episode{{ episode.season }}_{{ episode.nro }}" checked="on" onclick="javascript:mark_as_viewed({{ showid }}, {{ episode.season }}, {{ episode.nro }})"></td>
+                                            {% else %}
+                                                <td><input type="checkbox" name="option3" id="check_episode{{ episode.season }}_{{ episode.nro }}" onclick="javascript:mark_as_viewed({{ showid }}, {{ episode.season }}, {{ episode.nro }})"></td>
+                                            {% endif %}
                                           </tr>
                                         {% endfor %}
                                         </tbody>

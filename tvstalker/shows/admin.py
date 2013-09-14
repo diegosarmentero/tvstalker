@@ -37,6 +37,11 @@ class ShowNotFoundAdmin(admin.ModelAdmin):
     list_filter = ('name',)
 
 
+class UserViewedEpisodesAdmin(admin.ModelAdmin):
+    list_display = ('showid', 'season', 'episode', 'user', 'viewed')
+    list_filter = ('showid', 'season', 'episode', 'user', 'viewed')
+
+
 class UserFollowingAdmin(admin.ModelAdmin):
     list_display = ('showid', 'show', 'user')
     list_filter = ('showid', 'show', 'user')
@@ -48,4 +53,5 @@ admin.site.register(models.Show, ShowAdmin)
 admin.site.register(models.Season, SeasonAdmin)
 admin.site.register(models.Episode, EpisodeAdmin)
 admin.site.register(models.ShowNotFound, ShowNotFoundAdmin)
+admin.site.register(models.UserViewedEpisodes, UserViewedEpisodesAdmin)
 admin.site.register(models.UserFollowing, UserFollowingAdmin)

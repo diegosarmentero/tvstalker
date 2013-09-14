@@ -45,5 +45,13 @@ class UserFollowing(models.Model):
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
 
 
+class UserViewedEpisodes(models.Model):
+    showid = models.IntegerField()
+    season = models.IntegerField(default=0)
+    episode = models.IntegerField(default=0)
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    viewed = models.BooleanField(default=False)
+
+
 class ShowNotFound(models.Model):
     name = models.CharField(max_length=200, unique=True)

@@ -102,7 +102,7 @@ def details(request):
         info = shows.get_episodes_for_season(showid, season, episode)
         data['episode_info'] = info
     else:
-        seasons = shows.get_seasons(showid)
+        seasons = shows.get_seasons(showid, request.user)
         data['seasons'] = seasons
     most_rated = shows.get_most_rated_shows(request.user)
     data['recommended'] = most_rated
@@ -200,3 +200,20 @@ def guest_login(request):
     request.session['new_user'] = True
 
     return render_response(request, 'guest/guest_login.html')
+
+
+@login_required
+def mark_as_viewed(request):
+    result = True
+    if ("showid" in request.GET and "season" in request.GET and
+        "episode" in request.GET):
+        showid = request.GET['showid']
+        season = request.GET['season']
+        episode = request.GET['episode']
+        viewed = request.GET['viewed'] == "true"
+        if showid.isdigit() and season.isdigit():
+            result = shows.mark_as_viewed(request.user, int(showid),
+                int(season), episode, viewed)
+
+    data = simplejson.dumps([result])
+    return HttpResponse(data, mimetype='application/json')
