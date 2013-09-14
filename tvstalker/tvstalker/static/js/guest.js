@@ -1,3 +1,9 @@
+$(document).ready(function() {
+    var val = getCookie();
+    $.get("/rpc/guest_load?following=" + val, loadShows);
+})
+
+
 var CURRENT_SUGGESTION_TYPE = "rated";
 var CURRENT_SUGGESTION_PAGE = 0;
 
@@ -9,8 +15,8 @@ TEMPLATE_MULTIPLE = '<li><a onclick="jsfunction" href="javascript:chooseMultiple
 // {4} episode_nro
 // {5} next_episode_txt/TODAY
 // {6} airdate/empty
-TEMPLATE_SHOW = "<li class=\"span3\"><div class=\"thumbnail border-radius-top\"><div class=\"bg-thumbnail-img\"><a href='/details?show={1}'><img class=\"border-radius-top\" src=\"{0}\"></a></div>" +
-                "<h5><a href=\"/details?show={1}\">{2}</a></h5><h5><a href=\"/details?show={1}&season={3}&episode={4}\">" +
+TEMPLATE_SHOW = "<li class=\"span3\"><div class=\"thumbnail border-radius-top\"><div class=\"bg-thumbnail-img\"><a onclick=\"jsfunction\" href=\"javascript:notLoggedInMessage()\"><img class=\"border-radius-top\" src=\"{0}\"></a></div>" +
+                "<h5><a onclick=\"jsfunction\" href=\"javascript:notLoggedInMessage()\">{2}</a></h5><h5><a onclick=\"jsfunction\" href=\"javascript:notLoggedInMessage()\">" +
                 "Season: {3}  |  Episode: {4}</a></h5></div><div class=\"box border-radius-bottom\"><p>" +
                 "<span class=\"title_torrent pull-left\">{5}</span><span class=\"number-view pull-right\"> {6}</span></p></div></li>";
 // {0} image
@@ -19,9 +25,9 @@ TEMPLATE_SHOW = "<li class=\"span3\"><div class=\"thumbnail border-radius-top\">
 // {3} overview
 // {4} next_episode_txt/TODAY
 // {5} airdate/empty
-TEMPLATE_SUGGESTION = "<li class=\"span5\" id={1}><div class=\"thumbnail border-radius-top\"><div class=\"bg-thumbnail-img\"><a href=\"/details?show={1}\">" +
+TEMPLATE_SUGGESTION = "<li class=\"span5\" id={1}><div class=\"thumbnail border-radius-top\"><div class=\"bg-thumbnail-img\"><a onclick=\"jsfunction\" href=\"javascript:notLoggedInMessage()\">" +
                     "<img class=\"border-radius-top\" width=\"200\" src=\"{0}\"></a></div><div class=\"thumbnail-content-left\">" +
-                    "<h4><a href=\"/details?show={1}\">{2}</a></h4><h3><a onclick=\"jsfunction\" href=\"javascript:followRecommended({1}, 'rated')\" class=\"btn btn-green-s5\">Follow</a></h3>" +
+                    "<h4><a onclick=\"jsfunction\" href=\"javascript:notLoggedInMessage()\">{2}</a></h4><h3><a onclick=\"jsfunction\" href=\"javascript:followRecommended({1}, 'rated')\" class=\"btn btn-green-s5\">Follow</a></h3>" +
                     "<br><p>{3}</p></div></div><div class=\"box border-radius-bottom\"><p><span class=\"title_torrent pull-left\">{4}</span>" +
                     "<span class=\"number-view pull-right\">{5}</span></p></div></li>";
 
@@ -42,9 +48,40 @@ function addTvShow(){
             title: 'Show: ' + $("#search_show").val(),
             text: 'Stalking for Tv Show data.\nInformation will be available soon...'
         });
-        $.post("/rpc/", $("#form_search").serializeArray(), updateShows);
+        var showname = $("#search_show").val();
+        var val = getCookie();
+        $.get("/rpc/guest?showname=" + showname + "&following=" + val, updateShows);
         $("#search_show").val("");
     }
+}
+
+function saveCookie(value) {
+    var val = getCookie();
+    val += "," + value;
+    var exdate = new Date();
+    exdate.setDate(exdate.getDate() + 2);
+    var c_value = escape(val) + ((2==null) ? "" : "; expires=" + exdate.toUTCString());
+    document.cookie= "tvstalker" + "=" + c_value;
+}
+
+function getCookie()
+{
+    var c_value = document.cookie;
+    var c_start = c_value.indexOf(" tvstalker=");
+    if (c_start == -1){
+        c_start = c_value.indexOf("tvstalker=");
+    }
+    if (c_start == -1){
+        c_value = null;
+    }else{
+        c_start = c_value.indexOf("=", c_start) + 1;
+        var c_end = c_value.indexOf(";", c_start);
+        if (c_end == -1){
+            c_end = c_value.length;
+        }
+        c_value = unescape(c_value.substring(c_start,c_end));
+    }
+    return c_value;
 }
 
 function chooseMultiple(showid) {
@@ -52,8 +89,15 @@ function chooseMultiple(showid) {
         title: 'Checking selection...',
         text: 'Stalking for Tv Show data.\nInformation will be available soon...'
     });
-    $.get("/rpc/choose_show?showid=" + showid, updateShows);
+    var val = getCookie();
+    $.get("/rpc/choose_show_guest?showid=" + showid + "&following=" + val, updateShows);
     $('#feature-modal').modal('hide');
+}
+
+function loadShows(info) {
+    for(var i = 0; i < info.length; i++) {
+        updateShows(info[i], true);
+    }
 }
 
 function updateShows(info){
@@ -80,6 +124,10 @@ function updateShows(info){
             info["title"], info["season_nro"], info["episode_nro"],
             info["next"], info["airdate"]);
         $(content).appendTo("#shows_list");
+        var val = String(getCookie());
+        if(val.indexOf(info["showid"]) == -1) {
+            saveCookie(info["showid"]);
+        }
         $.pnotify({
             title: info["title"],
             text: 'Show info obtained!',
@@ -99,7 +147,8 @@ function followRecommended(showid, type) {
         title: 'Adding show...',
         text: 'Stalking for Tv Show data.\nInformation will be available soon...'
     });
-    $.get("/rpc/choose_show?showid=" + showid, updateSingleSuggestion);
+    var val = getCookie();
+    $.get("/rpc/choose_show_guest?showid=" + showid + "&following=" + val, updateSingleSuggestion);
     $($(".thumbnails-vertical").children("#" + showid)).remove();
 }
 
@@ -157,4 +206,23 @@ function previous_recommendation() {
 function next_recommendation() {
     CURRENT_SUGGESTION_PAGE++;
     $.get("/rpc/get_suggestions?page=" + CURRENT_SUGGESTION_PAGE + "&type=" + CURRENT_SUGGESTION_TYPE, updateSuggestions);
+}
+
+function notLoggedInMessage() {
+    $.pnotify({
+        title: 'Not Logged In',
+        text: 'You need to create an account to access Calendar information.',
+        type: 'info'
+    });
+}
+
+function removeCookie() {
+    document.cookie = 'tvstalker=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    $("#shows_list").html("")
+}
+
+function createAccount() {
+    var val = getCookie();
+    removeCookie();
+    window.location.replace("/guest_login/?following=" + val);
 }

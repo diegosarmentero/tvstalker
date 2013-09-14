@@ -74,9 +74,7 @@
                                             <th>#</th>
                                             <th>Episode Name</th>
                                             <th>Airdate</th>
-<!--
-                                            <th>Viewed</th>
--->
+                                            <th>Viewed <input type="checkbox" name="option3" value="all" onclick="javascript:mark_as_viewed('all', 0)"></th>
                                           </tr>
                                         </thead>
 
@@ -87,9 +85,7 @@
                                             <td><a href="/details?show={{ showid }}&season={{ episode.season }}&episode={{ episode.nro }}">
                                                 {{ episode.name }}</a></td>
                                             <td>{{ episode.airdate }}</td>
-<!--
-                                            <td><input type="checkbox" name="option3" value="Cheese"></td>
--->
+                                            <td><input type="checkbox" name="option3" value="{{ episode.nro }}" onclick="javascript:mark_as_viewed({{ episode.season }}, {{ episode.nro }})"></td>
                                           </tr>
                                         {% endfor %}
                                         </tbody>

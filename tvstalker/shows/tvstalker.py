@@ -24,7 +24,7 @@ class TvStalker(object):
     def __init__(self):
         self.db = api.TVDB(TVDB_KEY, banners=True)
 
-    def get_show(self, title, user):
+    def get_show(self, title, user=None):
         search = self.db.search(title, "en")
         result = None
         if len(search) == 1:
@@ -35,7 +35,7 @@ class TvStalker(object):
             result = self.parse_shows_results(search)
         return result
 
-    def get_show_by_id(self, showid, user):
+    def get_show_by_id(self, showid, user=None):
         try:
             show = self.db.get(showid, "en")
             return self.parse_show(show, user)
@@ -45,11 +45,12 @@ class TvStalker(object):
     def parse_show(self, show, user, title=""):
         try:
             data = {}
-            follow, created = models.UserFollowing.objects.get_or_create(
-                showid=show.id, user=user)
-            if not created:
-                data["do_nothing"] = True
-                return data
+            if user:
+                follow, created = models.UserFollowing.objects.get_or_create(
+                    showid=show.id, user=user)
+                if not created:
+                    data["do_nothing"] = True
+                    return data
             show.update()
 
             # Get Show
@@ -86,8 +87,9 @@ class TvStalker(object):
                 data["title"] = showdb.title
                 self.get_episode_info_by_date(showdb, data)
             # Set Following
-            follow.show = showdb
-            follow.save()
+            if user:
+                follow.show = showdb
+                follow.save()
             return data
         except:
             return {"error": "Error, please try again later..."}
