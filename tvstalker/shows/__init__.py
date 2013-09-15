@@ -11,12 +11,12 @@ from shows import models
 tv = tvstalker.TvStalker()
 
 
-def get_show(title, user):
-    return tv.get_show(title, user)
+def get_show(title, user, client=False):
+    return tv.get_show(title, user, client)
 
 
-def get_show_by_id(showid, user):
-    return tv.get_show_by_id(showid, user)
+def get_show_by_id(showid, user, client=False):
+    return tv.get_show_by_id(showid, user, client)
 
 
 def unfollow_show(showid, user):
@@ -42,14 +42,15 @@ def user_is_following(showid, user):
     return False
 
 
-def get_show_info(showid):
+def get_show_info(showid, client=False):
     show = models.Show.objects.filter(showid=int(showid))
     data = {}
     data['showid'] = show[0].showid
     data['title'] = show[0].title
     data['overview'] = show[0].overview
     data['poster'] = show[0].poster
-    data['genres'] = show[0].genre
+    if not client:
+        data['genres'] = show[0].genre
     tv.get_episode_info_by_date(show[0], data)
     return data
 
@@ -93,6 +94,34 @@ def get_seasons(showid, user):
     return data
 
 
+def get_seasons_client(showid, user):
+    seasons = models.Season.objects.filter(showid=int(showid)).order_by('-nro')
+    data = []
+    for season in seasons:
+        episodesdb = models.Episode.objects.filter(showid=int(showid),
+            season_nro=season.nro).order_by('nro')
+        info = {}
+        info["season"] = str(season.nro)
+        info["is_season"] = True
+        data.append(info)
+        for episode in episodesdb:
+            info = {}
+            info['season'] = str(season.nro)
+            info['nro'] = str(episode.nro)
+            info['name'] = episode.name
+            info['airdate'] = str(episode.airdate)
+            info["is_season"] = False
+            vieweddb = models.UserViewedEpisodes.objects.filter(
+                showid=showid, season=season.nro, user=user,
+                episode=episode.nro)
+            if vieweddb and vieweddb[0].viewed:
+                info["viewed"] = True
+            else:
+                info["viewed"] = False
+            data.append(info)
+    return data
+
+
 def get_shows_per_user(user, shows_filter):
     results = models.UserFollowing.objects.filter(user=user)
 
@@ -124,6 +153,27 @@ def get_shows_per_user(user, shows_filter):
                     continue
             else:
                 tv.get_episode_info_by_date(follow.show, data)
+            if data['next'] == 'TODAY' and data['episode_nro'] == 1:
+                premieres.append(data)
+            else:
+                shows.append(data)
+    return {'shows': shows, 'premieres': premieres}
+
+
+def get_shows_per_user_client(user):
+    results = models.UserFollowing.objects.filter(user=user)
+
+    premieres = []
+    shows = []
+    for follow in results:
+        if follow.show:
+            data = {}
+            data['showid'] = follow.show.showid
+            data['title'] = follow.show.title
+            data['poster'] = follow.show.poster
+            data["current"] = follow.show.current
+            data["dayOfWeek"] = follow.show.dayofweek
+            tv.get_episode_info_by_date_client(follow.show, data)
             if data['next'] == 'TODAY' and data['episode_nro'] == 1:
                 premieres.append(data)
             else:
@@ -164,7 +214,7 @@ def get_shows_per_day(day):
     return shows
 
 
-def get_most_rated_shows(user=None, page=0):
+def get_most_rated_shows(user=None, page=0, toshow=2):
     results = models.Show.objects.all().order_by('-rated')
     if user:
         following = models.UserFollowing.objects.filter(
@@ -172,7 +222,7 @@ def get_most_rated_shows(user=None, page=0):
     else:
         following = []
     recommended = []
-    limit = 2 + (page * 2)
+    limit = toshow + (page * toshow)
     for show in results:
         if len(recommended) == limit:
             break
@@ -184,17 +234,17 @@ def get_most_rated_shows(user=None, page=0):
             data['poster'] = show.poster
             tv.get_episode_info_by_date(show, data)
             recommended.append(data)
-    return recommended[(page * 2):]
+    return recommended[(page * toshow):]
 
 
-def get_most_viewed_shows(user, page=0):
+def get_most_viewed_shows(user, page=0, toshow=2):
     results = models.UserFollowing.objects.values(
         'showid').annotate(Count('showid')).order_by()
     results = sorted(results, key=lambda x: x['showid__count'], reverse=True)
     following = models.UserFollowing.objects.filter(
         user=user).values_list('showid', flat=True)
     recommended = []
-    limit = 2 + (page * 2)
+    limit = toshow + (page * toshow)
     for show in results:
         if len(recommended) == limit:
             break
@@ -207,7 +257,7 @@ def get_most_viewed_shows(user, page=0):
             data['poster'] = showdb.poster
             tv.get_episode_info_by_date(showdb, data)
             recommended.append(data)
-    return recommended[(page * 2):]
+    return recommended[(page * toshow):]
 
 
 def mark_as_viewed(user, showid, season, episode, viewed):

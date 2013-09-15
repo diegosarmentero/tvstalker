@@ -47,6 +47,11 @@ class UserFollowingAdmin(admin.ModelAdmin):
     list_filter = ('showid', 'show', 'user')
 
 
+class UserTokenAdmin(admin.ModelAdmin):
+    list_display = ('user', 'token')
+    list_filter = ('user', 'token')
+
+
 admin.site.register(models.TvDbApi, TvDbApiAdmin)
 admin.site.register(models.GenreTags, GenreTagsAdmin)
 admin.site.register(models.Show, ShowAdmin)
@@ -55,3 +60,4 @@ admin.site.register(models.Episode, EpisodeAdmin)
 admin.site.register(models.ShowNotFound, ShowNotFoundAdmin)
 admin.site.register(models.UserViewedEpisodes, UserViewedEpisodesAdmin)
 admin.site.register(models.UserFollowing, UserFollowingAdmin)
+admin.site.register(models.UserToken, UserTokenAdmin)

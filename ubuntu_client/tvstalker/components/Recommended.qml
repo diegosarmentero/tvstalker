@@ -1,11 +1,45 @@
 import QtQuick 2.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.Popups 0.1
+import "../js/server.js" as Server
 
 Base {
     id: root
 
     property string _description: ""
+    property string showid: ""
+    property string show_title: ""
+    property string type: "rated"
+    property int page: 0
+    property bool showButton: true
+    property var model
+
+    function load_recommend() {
+        Server.recommend(main.userTOKEN, root.type, root.page, load_callback);
+        root.showButton = true;
+    }
+
+    function previous_page(){
+        if(page > 0){
+            page--;
+        }
+
+        Server.recommend(main.userTOKEN, root.type, root.page, load_callback);
+    }
+
+    function next_page() {
+        page++;
+
+        Server.recommend(main.userTOKEN, root.type, root.page, load_callback);
+    }
+
+    function load_callback(info) {
+        if(info.length > 0){
+            root.model = info;
+        }else{
+            page--;
+        }
+    }
 
     Component {
         id: popoverDescription
@@ -64,16 +98,7 @@ Base {
                 right: parent.right
                 margins: units.gu(1)
             }
-            model: [
-                "../img/unnamed.jpg",
-                "../img/unnamed2.jpg",
-                "../img/unnamed3.jpg",
-                "../img/unnamed4.jpg",
-                "../img/unnamed5.jpg",
-                "../img/unnamed6.jpg",
-                "../img/unnamed7.jpg",
-                "../img/unnamed8.jpg",
-            ]
+            model: root.model
 
             delegate: Tile {
                 id: item
@@ -81,12 +106,50 @@ Base {
                 height: 1.48 * width
                 imageSource: Image {
                     asynchronous: true
-                    source: modelData
+                    source: modelData["poster"]
                 }
 
                 onClicked: {
-                    tile.imageSource.source = imagePath
-                    text_area_description.text = " ajsdhasjk dshsa dasd sahdksja dksah sahsad sajhdas jksa sajdas sahdkj asdhsa dashdjksa djsahjkd sadhasjk dsahdjsak djashd ashdaskj djas dkjsad  ajsdhasjk dshsa dasd sahdksja dksah sahsad sajhdas jksa sajdas sahdkj asdhsa dashdjksa djsahjkd sadhasjk dsahdjsak djashd ashdaskj djas dkjsad  ajsdhasjk dshsa dasd sahdksja dksah sahsad sajhdas jksa sajdas sahdkj asdhsa dashdjksa djsahjkd sadhasjk dsahdjsak djashd ashdaskj djas dkjsad"
+                    tile.imageSource.source = modelData["poster"]
+                    text_area_description.text = modelData["overview"]
+                    root.show_title = modelData["title"]
+                    root.showid = modelData["showid"]
+                }
+            }
+        }
+
+        Row {
+            spacing: units.gu(1)
+
+            Button {
+                text: "Most Rated"
+                onClicked: {
+                    root.type = "rated";
+                    root.page = 0;
+                    root.load_recommend();
+                }
+            }
+
+            Button {
+                text: "Most Viewed"
+                onClicked: {
+                    root.type = "viewed";
+                    root.page = 0;
+                    root.load_recommend();
+                }
+            }
+
+            Button {
+                text: "< Previous"
+                onClicked: {
+                    root.previous_page();
+                }
+            }
+
+            Button {
+                text: "Next >"
+                onClicked: {
+                    root.next_page();
                 }
             }
         }
@@ -121,6 +184,13 @@ Base {
                     width: row.width - tile.width - row.spacing
 
                     Label {
+                        id: labelTitle
+                        fontSize: "large"
+                        color: "white"
+                        text: show_title
+                    }
+
+                    Label {
                         id: labelExpand
                         text: i18n.tr("Tap text to expand")
                     }
@@ -128,7 +198,7 @@ Base {
                     UbuntuShape {
                         id: friendsArea
                         color: "white"
-                        height: col.height - row_buttons.height - (col.spacing * 2) - labelExpand.height
+                        height: col.height - row_buttons.height - (col.spacing * 2) - labelExpand.height - labelTitle.height
                         width: col.width
 
                         TextArea {
@@ -156,15 +226,22 @@ Base {
                         anchors.right: parent.right
 
                         Button {
+                            id: btn
                             text: i18n.tr("Follow")
+                            visible: root.showButton
 
                             onClicked: {
-                                //TODOOOOOOOO
+                                Server.add_show(main.userTOKEN, root.showid, root.reload);
+                                root.showButton = false;
                             }
                         }
                     }
                 }
             }
         }
+    }
+
+    function reload(info){
+        main.reload_shows();
     }
 }

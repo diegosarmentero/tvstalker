@@ -1,8 +1,6 @@
 import QtQuick 2.0
-import QtWebKit 3.0
 import Ubuntu.Components 0.1
 import "components"
-//import U1db 1.0 as U1db
 
 /*!
     \brief MainView with a Label and Button elements.
@@ -10,6 +8,7 @@ import "components"
 
 MainView {
     id: main
+    // objectName for functional testing purposes (autopilot-qt5)
     objectName: "TvStalker"
     state: "login"
     
@@ -26,11 +25,8 @@ MainView {
     width: units.gu(100)
     height: units.gu(75)
 
-//    U1db.Database {
-//            id: aDatabase
-//            path: "tvstalkerdb"
-//    }
-
+    property string userTOKEN: ""
+    
     Tabs {
         id: tabs
         anchors.fill: parent
@@ -39,43 +35,22 @@ MainView {
             title: "<font color='white'><b>Tv</font><font color='lightblue'>Stalker</b></font> Login"
             page: Login {
                 onLogin: {
-                    tabs.tabChildren = [home, friends, recommended, explore];
+                    main.userTOKEN = token;
+                    tabs.tabChildren = [home, recommended, explore];
+                    home.page.show_loading();
+                    home.page.init_user();
+                    home.page.load_shows();
                 }
             }
-            /*Page {
-                WebView {
-                        id: webview
-                        url: "http://tabugame.org/accounts/login/"
-                        width: parent.width
-                        height: parent.height
-                        onNavigationRequested: {
-                            // detect URL scheme prefix, most likely an external link
-                            var schemaRE = /^\w+:/;
-                            if (schemaRE.test(request.url)) {
-                                request.action = WebView.AcceptRequest;
-                            } else {
-                                request.action = WebView.IgnoreRequest;
-                                // delegate request.url here
-                            }
-                        }
-                    }
-            }*/
-
-
         }
-
-        onSelectedTabIndexChanged: {
-            if(selectedTabIndex == 2){
-                console.log("diegooooooo");
-            }
-        }
-
     }
 
     Tab {
         id: home
         title: "<font color='white'><b>Tv</font><font color='lightblue'>Stalker</b></font>"
-        page: Home {}
+        page: Home {
+            id: homePage
+        }
     }
 
     Tab {
@@ -87,13 +62,25 @@ MainView {
     Tab {
         id: recommended
         title: "<font color='white'><b>Re</font><font color='lightblue'>commended</b></font>"
-        page: Recommended {}
+        page: Recommended {
+            id: recommendPage
+        }
     }
 
     Tab {
         id: explore
         title: "<font color='white'><b>Ex</font><font color='lightblue'>plore</b></font>"
-        page: Explore {}
+        page: Explore {
+            id: explorePage
+        }
     }
 
+    function load_sections() {
+        explorePage.load_explore();
+        recommendPage.load_recommend();
+    }
+
+    function reload_shows(){
+        homePage.load_shows();
+    }
 }

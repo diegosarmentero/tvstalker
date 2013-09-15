@@ -1,3 +1,6 @@
+import uuid
+import hashlib
+
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -55,3 +58,12 @@ class UserViewedEpisodes(models.Model):
 
 class ShowNotFound(models.Model):
     name = models.CharField(max_length=200, unique=True)
+
+
+class UserToken(models.Model):
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    token = models.CharField(max_length=200, default="")
+
+    def create_token(self):
+        token = uuid.uuid4()
+        self.token = hashlib.sha224(str(token)).hexdigest()

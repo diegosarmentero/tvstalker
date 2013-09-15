@@ -44,7 +44,6 @@ def guest(request):
     else:
         shows_filter = 'all'
     data = {}
-    #data = shows.get_shows_per_user(request.user, shows_filter)
     most_rated = shows.get_most_rated_shows()
     data['recommended'] = most_rated
     data['filter'] = shows_filter
@@ -216,4 +215,120 @@ def mark_as_viewed(request):
                 int(season), episode, viewed)
 
     data = simplejson.dumps([result])
+    return HttpResponse(data, mimetype='application/json')
+
+
+# Client API
+def _validate_token(request):
+    user = None
+    token = request.GET.get('token', '')
+    tokendb = shows.models.UserToken.objects.filter(
+        token=token)
+    if len(tokendb) == 1:
+        user = tokendb[0].user
+
+    return user
+
+
+def get_token(request):
+    response = {}
+    username = request.GET.get('username', '')
+    password = request.GET.get('password', '')
+    users = shows.models.User.objects.filter(username=username)
+    if len(users) == 1 and users[0].check_password(password):
+        user = users[0]
+        tokendb, create = shows.models.UserToken.objects.get_or_create(
+            user=user)
+        tokendb.create_token()
+        tokendb.save()
+        response['token'] = tokendb.token
+    else:
+        response['invalid'] = 'Invalid User'
+
+    data = simplejson.dumps(response)
+    return HttpResponse(data, mimetype='application/json')
+
+
+def get_shows(request):
+    response = []
+    user = _validate_token(request)
+    if user:
+        response = shows.get_shows_per_user_client(user)
+
+    data = simplejson.dumps(response)
+    return HttpResponse(data, mimetype='application/json')
+
+
+def search_show(request):
+    show_data = None
+    user = _validate_token(request)
+    if user:
+        search = request.GET.get('search', '')
+        show_data = shows.get_show(search, user, client=True)
+
+    data = simplejson.dumps(show_data)
+    return HttpResponse(data, mimetype='application/json')
+
+
+def get_details(request):
+    data = {}
+    user = _validate_token(request)
+    if user:
+        showid = request.GET.get('showid', '')
+        data = shows.get_show_info(showid, client=True)
+        data['following'] = shows.user_is_following(showid, user)
+        seasons = shows.get_seasons_client(showid, user)
+        data['seasons'] = seasons
+
+    data = simplejson.dumps(data)
+    return HttpResponse(data, mimetype='application/json')
+
+
+def mark_as_viewed_client(request):
+    result = True
+    user = _validate_token(request)
+    if user:
+        showid = request.GET.get('showid', '')
+        season = request.GET.get('season', '')
+        episode = request.GET.get('episode', '')
+        checked = request.GET.get('checked', '')
+        result = shows.mark_as_viewed(user, int(showid),
+            int(season), int(episode), checked)
+
+    data = simplejson.dumps([result])
+    return HttpResponse(data, mimetype='application/json')
+
+
+def explore_client(request):
+    day = request.GET.get('day', '')
+    results = shows.get_shows_per_day(day)
+
+    data = simplejson.dumps(results)
+    return HttpResponse(data, mimetype='application/json')
+
+
+def get_suggestions_client(request):
+    page = int(request.GET.get('page', 0))
+    type_ = request.GET.get('type', 'rated')
+    user = _validate_token(request)
+    results = []
+    if user:
+        if type_ == 'rated':
+            results = shows.get_most_rated_shows(user, page, 6)
+        else:
+            results = shows.get_most_viewed_shows(user, page, 6)
+
+    data = simplejson.dumps(results)
+    return HttpResponse(data, mimetype='application/json')
+
+
+def follow_show(request):
+    show_data = None
+    user = _validate_token(request)
+    if user:
+        showid = int(request.GET.get('showid', 0))
+        show_data = shows.get_show_by_id(showid, user, client=True)
+        shows.follow_show(showid, user)
+
+    data = simplejson.dumps(show_data)
     return HttpResponse(data, mimetype='application/json')

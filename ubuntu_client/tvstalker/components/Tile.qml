@@ -6,14 +6,17 @@ UbuntuShape {
     id: tile
     color: "#24262c"
 
+    property int showID: 0
     property alias imageSource: img.image
     property int tileInfoArea: 0
     property int _tileBorders: units.gu(2)
     property alias date: label_date.text
     property alias showName: label_name.text
-    property int showSeason: 0
-    property int showEpisode: 0
+    property string showSeason: ""
+    property string showEpisode: ""
     property string showDate: ""
+    property string airdate: ""
+    property bool current: false
 
     signal clicked(string name, int season, int episode, string date, string imagePath)
 
@@ -59,7 +62,7 @@ UbuntuShape {
 
     Label {
         id: label_episode
-        text: i18n.tr("Season: %1  |  Episode: %1").arg((showSeason, showEpisode))
+        text: i18n.tr("Season: ") + showSeason + i18n.tr("  |  Episode: ") + showEpisode
         visible: showSeason && showEpisode ? true : false
         color: "lightblue"
         fontSize: "medium"
@@ -100,7 +103,7 @@ UbuntuShape {
 
         Label {
             id: label_date
-            text: i18n.tr("Next Episode: %1").arg(showDate)
+            text: showDate
             visible: text ? true : false
             color: "white"
             fontSize: "medium"
