@@ -1,10 +1,13 @@
 import QtQuick 2.0
 import Ubuntu.Components 0.1
+import "../js/server.js" as Server
 
 Base {
     id: root
 
-    signal login
+    signal login(string token)
+
+    property string _errorMessage: ""
 
     body: Column {
         id: col
@@ -28,6 +31,19 @@ Base {
             opacity: .9
             style: Text.Raised
             styleColor: "black"
+        }
+
+        Label {
+            text: root._errorMessage
+            fontSize: "large"
+            smooth: true
+            width: parent.width
+            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+            color: "red"
+            opacity: .9
+            style: Text.Raised
+            styleColor: "black"
+            visible: root._errorMessage
         }
 
         UbuntuShape {
@@ -97,36 +113,12 @@ Base {
                         Column {
                             spacing: units.gu(2)
                             Label {
-                                text: i18n.tr("Re-type Password")
+                                text: i18n.tr("Go to: http://tvstalker.tv to Create an Account!")
                                 fontSize: "large"
-                                color: Theme.palette.normal.baseText
+                                color: "lightgreen"
                                 opacity: .6
                                 style: Text.Raised
                                 styleColor: "black"
-                            }
-
-                            TextField {
-                                id: text_password
-                                width: col_login.width
-                                hasClearButton: true
-                                placeholderText: "Password"
-                                echoMode: TextInput.Password
-                            }
-
-                            Label {
-                                text: i18n.tr("Email")
-                                fontSize: "large"
-                                color: Theme.palette.normal.baseText
-                                opacity: .6
-                                style: Text.Raised
-                                styleColor: "black"
-                            }
-
-                            TextField {
-                                id: text_username
-                                width: col_login.width
-                                hasClearButton: true
-                                placeholderText: "email@email.com"
                             }
                         }
                     }
@@ -140,11 +132,11 @@ Base {
                         checked: false
 
                         onCheckedChanged: {
-                            if(checked) {
-                                button.text = i18n.tr("Register");
-                            } else {
-                                button.text = i18n.tr("Login");
+                            if(!checked) {
                                 loader.y = 0;
+                                button.visible = true;
+                            }else{
+                                button.visible = false;
                             }
                         }
                     }
@@ -165,9 +157,22 @@ Base {
                     anchors.right: parent.right
                     text: i18n.tr("Login")
 
-                    onClicked: root.login();
+                    onClicked: {
+                        root.show_loading();
+                        Server.login(text_username.text, text_password.text, login_callback);
+                    }
                 }
             }
+        }
+    }
+
+    function login_callback(response) {
+        root.hide_loading();
+        if(response["token"]) {
+            root._errorMessage = "";
+            root.login(response["token"]);
+        } else {
+            root._errorMessage = response["invalid"];
         }
     }
 

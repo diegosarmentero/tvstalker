@@ -1,7 +1,7 @@
 [Desktop Entry]
-Name=TvStalker
+Name=tvstalker
 Comment=My project description
-Exec=/usr/bin/qmlscene $@ /usr/share/TvStalker/TvStalker.qml
+Exec=/usr/bin/qmlscene $@ /usr/share/tvstalker/tvstalker.qml
 Icon=qmlscene
 Terminal=false
 Type=Application

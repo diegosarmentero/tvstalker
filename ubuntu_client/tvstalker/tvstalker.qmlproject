@@ -3,7 +3,7 @@
 import QmlProject 1.1
 
 Project {
-    mainFile: "TvStalker.qml"
+    mainFile: "tvstalker.qml"
     
     /* Include .qml, .js, and image files from current directory and subdirectories */
     QmlFiles {
@@ -26,19 +26,15 @@ Project {
         filter: "*"
     }
     Files {
-        directory: "components/"
-        filter: "*"
-    }
-    Files {
         directory: "img/"
         filter: "*"
     }
     Files {
-        directory: "js/"
+        directory: "css/"
         filter: "*"
     }
     Files {
-        directory: "css/"
+        directory: "js/"
         filter: "*"
     }
     Files {

@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import Ubuntu.Components 0.1
+import Ubuntu.Components.Popups 0.1
 
 Page {
     id: root
@@ -11,6 +12,37 @@ Page {
     property Component footer
 
     signal flickMoved
+
+    property bool _loadingOpened: false
+
+    Component {
+        id: loading
+        Dialog {
+            id: dialogue
+            title: i18n.tr("Loading...")
+
+            property bool stayOpen: root._loadingOpened
+
+            onStayOpenChanged: {
+                if(stayOpen == false) {
+                    PopupUtils.close(dialogue);
+                }
+            }
+
+            ActivityIndicator {
+                running: dialogue.visible
+            }
+        }
+    }
+
+    function show_loading() {
+        root._loadingOpened = true;
+        PopupUtils.open(loading);
+    }
+
+    function hide_loading() {
+        root._loadingOpened = false;
+    }
 
     Flickable {
         id: flick

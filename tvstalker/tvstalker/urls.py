@@ -29,6 +29,17 @@ urlpatterns = patterns('',
     url(r'^rpc/guest', views.rpc_guest, name="rpc_guest"),
     url(r'^rpc/mark_as_viewed', views.mark_as_viewed, name="mark_as_viewed"),
     url(r'^rpc/', views.rpc, name="rpc"),
+    # Client API
+    url(r'^api/get_details', views.get_details, name="get_details"),
+    url(r'^api/get_token', views.get_token, name="get_token"),
+    url(r'^api/get_shows', views.get_shows, name="get_shows"),
+    url(r'^api/follow', views.follow_show, name="follow_show"),
+    url(r'^api/explore', views.explore_client, name="explore_client"),
+    url(r'^api/get_suggestions', views.get_suggestions_client,
+        name="get_suggestions_client"),
+    url(r'^api/mark_as_viewed', views.mark_as_viewed_client,
+        name="mark_as_viewed_client"),
+    url(r'^api/search_show', views.search_show, name="search_show"),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

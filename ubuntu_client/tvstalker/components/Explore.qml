@@ -2,9 +2,62 @@ import QtQuick 2.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.Popups 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
+import "../js/server.js" as Server
 
 Base {
     id: root
+
+    property var monday
+    property var tuesday
+    property var wednesday
+    property var thursday
+    property var friday
+    property var saturday
+    property var sunday
+
+    function load_explore(){
+        Server.explore_day("monday", monday_callback);
+        Server.explore_day("tuesday", tuesday_callback);
+        Server.explore_day("wednesday", wednesday_callback);
+        Server.explore_day("thursday", thursday_callback);
+        Server.explore_day("friday", friday_callback);
+        Server.explore_day("saturday", saturday_callback);
+        Server.explore_day("sunday", sunday_callback);
+    }
+
+    function monday_callback(info){
+        root.monday = info;
+    }
+
+    function tuesday_callback(info){
+        root.tuesday = info;
+    }
+
+    function wednesday_callback(info){
+        root.wednesday = info;
+    }
+
+    function thursday_callback(info){
+        root.thursday = info;
+    }
+
+    function friday_callback(info){
+        root.friday = info;
+    }
+
+    function saturday_callback(info){
+        root.saturday = info;
+    }
+
+    function sunday_callback(info){
+        root.sunday = info;
+    }
+
+    ShowDetails {
+        id: details
+        visible: false
+        following: false
+    }
 
     body: Column {
         anchors {
@@ -36,28 +89,19 @@ Base {
                 right: parent.right
                 margins: units.gu(1)
             }
-            model: [
-                "../img/unnamed.jpg",
-                "../img/unnamed2.jpg",
-                "../img/unnamed3.jpg",
-                "../img/unnamed4.jpg",
-                "../img/unnamed5.jpg",
-                "../img/unnamed6.jpg",
-                "../img/unnamed7.jpg",
-                "../img/unnamed8.jpg",
-            ]
+            model: root.monday
 
             delegate: Tile {
                 width: root.width / 4
                 height: 1.48 * width
                 imageSource: Image {
                     asynchronous: true
-                    source: modelData
+                    source: modelData["poster"]
                 }
 
                 onClicked: {
-                    tile.imageSource.source = imagePath
-                    text_area_description.text = " ajsdhasjk dshsa dasd sahdksja dksah sahsad sajhdas jksa sajdas sahdkj asdhsa dashdjksa djsahjkd sadhasjk dsahdjsak djashd ashdaskj djas dkjsad  ajsdhasjk dshsa dasd sahdksja dksah sahsad sajhdas jksa sajdas sahdkj asdhsa dashdjksa djsahjkd sadhasjk dsahdjsak djashd ashdaskj djas dkjsad  ajsdhasjk dshsa dasd sahdksja dksah sahsad sajhdas jksa sajdas sahdkj asdhsa dashdjksa djsahjkd sadhasjk dsahdjsak djashd ashdaskj djas dkjsad"
+                    details.showid = modelData["showid"];
+                    details.visible = true;
                 }
             }
         }
@@ -85,28 +129,19 @@ Base {
                 right: parent.right
                 margins: units.gu(1)
             }
-            model: [
-                "../img/unnamed.jpg",
-                "../img/unnamed2.jpg",
-                "../img/unnamed3.jpg",
-                "../img/unnamed4.jpg",
-                "../img/unnamed5.jpg",
-                "../img/unnamed6.jpg",
-                "../img/unnamed7.jpg",
-                "../img/unnamed8.jpg",
-            ]
+            model: root.tuesday
 
             delegate: Tile {
                 width: root.width / 4
                 height: 1.48 * width
                 imageSource: Image {
                     asynchronous: true
-                    source: modelData
+                    source: modelData["poster"]
                 }
 
                 onClicked: {
-                    tile.imageSource.source = imagePath
-                    text_area_description.text = " ajsdhasjk dshsa dasd sahdksja dksah sahsad sajhdas jksa sajdas sahdkj asdhsa dashdjksa djsahjkd sadhasjk dsahdjsak djashd ashdaskj djas dkjsad  ajsdhasjk dshsa dasd sahdksja dksah sahsad sajhdas jksa sajdas sahdkj asdhsa dashdjksa djsahjkd sadhasjk dsahdjsak djashd ashdaskj djas dkjsad  ajsdhasjk dshsa dasd sahdksja dksah sahsad sajhdas jksa sajdas sahdkj asdhsa dashdjksa djsahjkd sadhasjk dsahdjsak djashd ashdaskj djas dkjsad"
+                    details.showid = modelData["showid"];
+                    details.visible = true;
                 }
             }
         }
@@ -134,28 +169,19 @@ Base {
                 right: parent.right
                 margins: units.gu(1)
             }
-            model: [
-                "../img/unnamed.jpg",
-                "../img/unnamed2.jpg",
-                "../img/unnamed3.jpg",
-                "../img/unnamed4.jpg",
-                "../img/unnamed5.jpg",
-                "../img/unnamed6.jpg",
-                "../img/unnamed7.jpg",
-                "../img/unnamed8.jpg",
-            ]
+            model: root.wednesday
 
             delegate: Tile {
                 width: root.width / 4
                 height: 1.48 * width
                 imageSource: Image {
                     asynchronous: true
-                    source: modelData
+                    source: modelData["poster"]
                 }
 
                 onClicked: {
-                    tile.imageSource.source = imagePath
-                    text_area_description.text = " ajsdhasjk dshsa dasd sahdksja dksah sahsad sajhdas jksa sajdas sahdkj asdhsa dashdjksa djsahjkd sadhasjk dsahdjsak djashd ashdaskj djas dkjsad  ajsdhasjk dshsa dasd sahdksja dksah sahsad sajhdas jksa sajdas sahdkj asdhsa dashdjksa djsahjkd sadhasjk dsahdjsak djashd ashdaskj djas dkjsad  ajsdhasjk dshsa dasd sahdksja dksah sahsad sajhdas jksa sajdas sahdkj asdhsa dashdjksa djsahjkd sadhasjk dsahdjsak djashd ashdaskj djas dkjsad"
+                    details.showid = modelData["showid"];
+                    details.visible = true;
                 }
             }
         }
@@ -183,28 +209,19 @@ Base {
                 right: parent.right
                 margins: units.gu(1)
             }
-            model: [
-                "../img/unnamed.jpg",
-                "../img/unnamed2.jpg",
-                "../img/unnamed3.jpg",
-                "../img/unnamed4.jpg",
-                "../img/unnamed5.jpg",
-                "../img/unnamed6.jpg",
-                "../img/unnamed7.jpg",
-                "../img/unnamed8.jpg",
-            ]
+            model: root.thursday
 
             delegate: Tile {
                 width: root.width / 4
                 height: 1.48 * width
                 imageSource: Image {
                     asynchronous: true
-                    source: modelData
+                    source: modelData["poster"]
                 }
 
                 onClicked: {
-                    tile.imageSource.source = imagePath
-                    text_area_description.text = " ajsdhasjk dshsa dasd sahdksja dksah sahsad sajhdas jksa sajdas sahdkj asdhsa dashdjksa djsahjkd sadhasjk dsahdjsak djashd ashdaskj djas dkjsad  ajsdhasjk dshsa dasd sahdksja dksah sahsad sajhdas jksa sajdas sahdkj asdhsa dashdjksa djsahjkd sadhasjk dsahdjsak djashd ashdaskj djas dkjsad  ajsdhasjk dshsa dasd sahdksja dksah sahsad sajhdas jksa sajdas sahdkj asdhsa dashdjksa djsahjkd sadhasjk dsahdjsak djashd ashdaskj djas dkjsad"
+                    details.showid = modelData["showid"];
+                    details.visible = true;
                 }
             }
         }
@@ -232,28 +249,19 @@ Base {
                 right: parent.right
                 margins: units.gu(1)
             }
-            model: [
-                "../img/unnamed.jpg",
-                "../img/unnamed2.jpg",
-                "../img/unnamed3.jpg",
-                "../img/unnamed4.jpg",
-                "../img/unnamed5.jpg",
-                "../img/unnamed6.jpg",
-                "../img/unnamed7.jpg",
-                "../img/unnamed8.jpg",
-            ]
+            model: root.friday
 
             delegate: Tile {
                 width: root.width / 4
                 height: 1.48 * width
                 imageSource: Image {
                     asynchronous: true
-                    source: modelData
+                    source: modelData["poster"]
                 }
 
                 onClicked: {
-                    tile.imageSource.source = imagePath
-                    text_area_description.text = " ajsdhasjk dshsa dasd sahdksja dksah sahsad sajhdas jksa sajdas sahdkj asdhsa dashdjksa djsahjkd sadhasjk dsahdjsak djashd ashdaskj djas dkjsad  ajsdhasjk dshsa dasd sahdksja dksah sahsad sajhdas jksa sajdas sahdkj asdhsa dashdjksa djsahjkd sadhasjk dsahdjsak djashd ashdaskj djas dkjsad  ajsdhasjk dshsa dasd sahdksja dksah sahsad sajhdas jksa sajdas sahdkj asdhsa dashdjksa djsahjkd sadhasjk dsahdjsak djashd ashdaskj djas dkjsad"
+                    details.showid = modelData["showid"];
+                    details.visible = true;
                 }
             }
         }
@@ -281,28 +289,19 @@ Base {
                 right: parent.right
                 margins: units.gu(1)
             }
-            model: [
-                "../img/unnamed.jpg",
-                "../img/unnamed2.jpg",
-                "../img/unnamed3.jpg",
-                "../img/unnamed4.jpg",
-                "../img/unnamed5.jpg",
-                "../img/unnamed6.jpg",
-                "../img/unnamed7.jpg",
-                "../img/unnamed8.jpg",
-            ]
+            model: root.saturday
 
             delegate: Tile {
                 width: root.width / 4
                 height: 1.48 * width
                 imageSource: Image {
                     asynchronous: true
-                    source: modelData
+                    source: modelData["poster"]
                 }
 
                 onClicked: {
-                    tile.imageSource.source = imagePath
-                    text_area_description.text = " ajsdhasjk dshsa dasd sahdksja dksah sahsad sajhdas jksa sajdas sahdkj asdhsa dashdjksa djsahjkd sadhasjk dsahdjsak djashd ashdaskj djas dkjsad  ajsdhasjk dshsa dasd sahdksja dksah sahsad sajhdas jksa sajdas sahdkj asdhsa dashdjksa djsahjkd sadhasjk dsahdjsak djashd ashdaskj djas dkjsad  ajsdhasjk dshsa dasd sahdksja dksah sahsad sajhdas jksa sajdas sahdkj asdhsa dashdjksa djsahjkd sadhasjk dsahdjsak djashd ashdaskj djas dkjsad"
+                    details.showid = modelData["showid"];
+                    details.visible = true;
                 }
             }
         }
@@ -330,28 +329,19 @@ Base {
                 right: parent.right
                 margins: units.gu(1)
             }
-            model: [
-                "../img/unnamed.jpg",
-                "../img/unnamed2.jpg",
-                "../img/unnamed3.jpg",
-                "../img/unnamed4.jpg",
-                "../img/unnamed5.jpg",
-                "../img/unnamed6.jpg",
-                "../img/unnamed7.jpg",
-                "../img/unnamed8.jpg",
-            ]
+            model: root.sunday
 
             delegate: Tile {
                 width: root.width / 4
                 height: 1.48 * width
                 imageSource: Image {
                     asynchronous: true
-                    source: modelData
+                    source: modelData["poster"]
                 }
 
                 onClicked: {
-                    tile.imageSource.source = imagePath
-                    text_area_description.text = " ajsdhasjk dshsa dasd sahdksja dksah sahsad sajhdas jksa sajdas sahdkj asdhsa dashdjksa djsahjkd sadhasjk dsahdjsak djashd ashdaskj djas dkjsad  ajsdhasjk dshsa dasd sahdksja dksah sahsad sajhdas jksa sajdas sahdkj asdhsa dashdjksa djsahjkd sadhasjk dsahdjsak djashd ashdaskj djas dkjsad  ajsdhasjk dshsa dasd sahdksja dksah sahsad sajhdas jksa sajdas sahdkj asdhsa dashdjksa djsahjkd sadhasjk dsahdjsak djashd ashdaskj djas dkjsad"
+                    details.showid = modelData["showid"];
+                    details.visible = true;
                 }
             }
         }

@@ -18,4 +18,4 @@ check:
 	qmltestrunner -input tests/unit
 
 run:
-	/usr/bin/qmlscene $@ TvStalker.qml
+	/usr/bin/qmlscene $@ tvstalker.qml
