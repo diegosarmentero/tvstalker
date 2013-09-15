@@ -1,0 +1,14 @@
+{
+    "description": "All the information about your favorite Tv Shows in one place.",
+    "framework": "ubuntu-sdk-13.10",
+    "hooks": {
+        "tvstalker": {
+            "apparmor": "tvstalker.json",
+            "desktop": "tvstalker.desktop"
+        }
+    },
+    "maintainer": "Diego Sarmentero <diego.sarmentero@gmail.com>",
+    "name": "com.ubuntu.developer.diegosarmentero.tvstalker",
+    "title": "TvStalker",
+    "version": "0.1"
+}

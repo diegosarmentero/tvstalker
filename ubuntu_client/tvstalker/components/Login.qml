@@ -8,6 +8,7 @@ Base {
     signal login(string token)
 
     property string _errorMessage: ""
+    property bool loginSuccess: false
 
     body: Column {
         id: col
