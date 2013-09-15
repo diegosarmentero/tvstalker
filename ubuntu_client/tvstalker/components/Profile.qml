@@ -6,14 +6,8 @@ import Ubuntu.Components.ListItems 0.1 as ListItem
 Popover {
     id: popover
 
-    Component {
-        id: showDetails
-        ShowDetails {
-            id: details
-
-            contentHeight: root.height
-            contentWidth: root.width
-        }
+    ShowDetails {
+        id: details
     }
 
     Rectangle {
