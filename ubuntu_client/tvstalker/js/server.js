@@ -1,6 +1,6 @@
 .pragma library
 
-var URL = "http://localhost:8000/";
+var URL = "http://tvstalker.tv/";
 
 function login(username, password, callback) {
     var doc = new XMLHttpRequest();
