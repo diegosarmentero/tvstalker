@@ -114,12 +114,13 @@ Base {
                         Column {
                             spacing: units.gu(2)
                             Label {
-                                text: i18n.tr("Go to: http://tvstalker.tv to Create an Account!")
+                                text: i18n.tr("Go to: http://tvstalker.tv\nto Create an Account!")
                                 fontSize: "large"
                                 color: "lightgreen"
                                 opacity: .6
                                 style: Text.Raised
                                 styleColor: "black"
+                                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                             }
                         }
                     }

@@ -12,7 +12,8 @@ def get_key():
     global TVDB_KEY
 
     keys = models.TvDbApi.objects.values_list('key', flat=True)
-    TVDB_KEY = keys[0]
+    if len(keys) > 0:
+        TVDB_KEY = keys[0]
 
 
 # SET THE KEY VALUE
@@ -22,9 +23,15 @@ get_key()
 class TvStalker(object):
 
     def __init__(self):
-        self.db = api.TVDB(TVDB_KEY, banners=True)
+        global TVDB_KEY
+        if TVDB_KEY:
+            self.db = api.TVDB(TVDB_KEY, banners=True)
+        else:
+            self.db = None
 
     def get_show(self, title, user=None, client=False):
+        if self.db is None:
+            return {"error": "Error, please try again later..."}
         search = self.db.search(title, "en")
         result = None
         if len(search) == 1:

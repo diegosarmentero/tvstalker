@@ -118,40 +118,53 @@ Base {
             }
         }
 
-        Row {
-            spacing: units.gu(1)
+        Column {
+            spacing: units.gu(2)
 
-            Button {
-                text: "Most Rated"
-                onClicked: {
-                    root.type = "rated";
-                    root.page = 0;
-                    root.load_recommend();
+            Row {
+                spacing: units.gu(3)
+
+                Button {
+                    text: i18n.tr("Most Rated")
+                    width: (root.width / 3)
+                    onClicked: {
+                        root.type = "rated";
+                        root.page = 0;
+                        root.load_recommend();
+                    }
+                }
+
+                Button {
+                    text: i18n.tr("Most Viewed")
+                    width: (root.width / 3)
+                    onClicked: {
+                        root.type = "viewed";
+                        root.page = 0;
+                        root.load_recommend();
+                    }
                 }
             }
 
-            Button {
-                text: "Most Viewed"
-                onClicked: {
-                    root.type = "viewed";
-                    root.page = 0;
-                    root.load_recommend();
+            Row {
+                spacing: units.gu(3)
+
+                Button {
+                    text: i18n.tr("< Previous")
+                    width: (root.width / 3)
+                    onClicked: {
+                        root.previous_page();
+                    }
+                }
+
+                Button {
+                    text: i18n.tr("Next >")
+                    width: (root.width / 3)
+                    onClicked: {
+                        root.next_page();
+                    }
                 }
             }
 
-            Button {
-                text: "< Previous"
-                onClicked: {
-                    root.previous_page();
-                }
-            }
-
-            Button {
-                text: "Next >"
-                onClicked: {
-                    root.next_page();
-                }
-            }
         }
 
         UbuntuShape {
@@ -233,6 +246,9 @@ Base {
                             onClicked: {
                                 Server.add_show(main.userTOKEN, root.showid, root.reload);
                                 root.showButton = false;
+                                labelTitle.text = "";
+                                text_area_description.text = "";
+                                tile.imageSource.source = "";
                             }
                         }
                     }
