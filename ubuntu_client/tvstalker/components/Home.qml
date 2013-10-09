@@ -126,7 +126,6 @@ Base {
     }
 
     function search_callback(result) {
-        console.log("cllackkkkbkkkkkkk");
         if(result["showid"]){
             showsModel.append({"mshowID": result["showid"],
                               "mshowName": result["title"],
@@ -210,19 +209,6 @@ Base {
                     }
                 }
                 ListItem.Standard {
-                    id: listYesterday
-                    text: "<font color='white'>Yesterday</font>"
-                    property string value: "Yesterday"
-                    control: Switch {
-                        checked: root.selectedFilter[0] == listYesterday.value ? true : false
-                        onClicked: {
-                            root.selectedFilter = [listYesterday.value, "", ""];
-                            popover.hide();
-                            Filter.filter_yesterday();
-                        }
-                    }
-                }
-                ListItem.Standard {
                     id: listDate
                     text: "<font color='white'>By Day of Week</font>"
                     property string value: "Date"
@@ -290,7 +276,7 @@ Base {
 
             Button {
                 id: btnSearch
-                text: i18n.tr("Search")
+                text: root.width > units.gu(50) ? i18n.tr("Search") : ""
                 height: text_search.height
                 iconSource: "../img/search.png"
 

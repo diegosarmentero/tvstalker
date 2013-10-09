@@ -17,8 +17,10 @@ Rectangle {
     property bool following: true
 
     onShowidChanged: {
-        root.loadingOpened = true;
-        Server.get_show_details(main.userTOKEN, root.showid, callback)
+        if(root.showid.length > 0) {
+            root.loadingOpened = true;
+            Server.get_show_details(main.userTOKEN, root.showid, callback)
+        }
     }
 
     function callback(info) {
@@ -71,7 +73,10 @@ Rectangle {
                 Button {
                     text: i18n.tr("Close")
                     color: "grey"
-                    onClicked: root.visible = false;
+                    onClicked: {
+                        root.visible = false;
+                        root.showid = "";
+                    }
                 }
                 Button {
                     text: root.following ? i18n.tr("Unfollow") : i18n.tr("Follow")
