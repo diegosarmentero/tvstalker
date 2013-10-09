@@ -2,7 +2,7 @@
 Name=tvstalker
 Comment=My project description
 Exec=/usr/bin/qmlscene $@ /usr/share/tvstalker/tvstalker.qml
-Icon=qmlscene
+Icon=tvstalker.png
 Terminal=false
 Type=Application
 X-Ubuntu-Touch=true
