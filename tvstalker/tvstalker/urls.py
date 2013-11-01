@@ -20,6 +20,7 @@ urlpatterns = patterns('',
     url(r'^details/', views.details, name="details"),
     url(r'^explore/', views.explore, name="explore"),
     url(r'^genres/', views.genres, name="genres"),
+    url(r'^update/', views.update, name="update"),
     # RPC
     url(r'^rpc/choose_show_guest', views.choose_show_guest,
         name="choose_show_guest"),

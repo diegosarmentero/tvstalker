@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.utils import simplejson
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.http import require_POST
 
 import shows
@@ -31,6 +32,14 @@ def home(request):
     data['recommended'] = most_rated
     data['filter'] = shows_filter
     return render_response(request, 'index.html', data)
+
+
+@staff_member_required
+@login_required
+def update(request):
+    """Update Page."""
+    data = shows.get_shows_to_update()
+    return render_response(request, 'update.html', data)
 
 
 def guest(request):
@@ -331,4 +340,10 @@ def follow_show(request):
         shows.follow_show(showid, user)
 
     data = simplejson.dumps(show_data)
+    return HttpResponse(data, mimetype='application/json')
+
+
+@staff_member_required
+def update_shows(request):
+    data = simplejson.dumps([True])
     return HttpResponse(data, mimetype='application/json')
