@@ -218,7 +218,7 @@ class TvStalker(object):
         nro = season.season_number
         seasondb, created = models.Season.objects.get_or_create(
             showid=show.showid, nro=nro)
-        if created:
+        if created or update:
             seasondb.save()
             show.seasons.add(seasondb)
             for episode in season:
