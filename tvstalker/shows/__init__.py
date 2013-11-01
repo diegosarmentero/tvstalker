@@ -180,6 +180,10 @@ def get_shows_to_update():
     return {'shows': shows}
 
 
+def update_show(showid):
+    tv.update_show_by_id(showid)
+
+
 def get_shows_per_user_client(user):
     results = models.UserFollowing.objects.filter(user=user)
 

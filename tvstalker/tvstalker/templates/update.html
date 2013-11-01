@@ -9,7 +9,7 @@
             <div class="box-wrapper span12">
                 <div class="widget">
                     <div class="wrapper-search">
-                        <a href="{% url 'guest' %}" class="btn btn-red-s6">Update All</a>
+                        <a onclick="jsfunction" href="javascript:updateAll()" class="btn btn-red-s6">Update All!</a>
                     </div>
                 </div>
             </div><!-- end box-wrapper -->
@@ -34,7 +34,7 @@
                                     Season: {{ show.season_nro }}  |  Episode: {{ show.episode_nro }}</a></h5>
                             </div>
                             <div class="box border-radius-bottom">
-                                <a href="{% url 'guest' %}" class="btn btn-red-s6">Update</a>
+                                <a href="{% url 'update' %}?showid={{ show.showid }}" class="btn btn-red-s6">Update</a>
                             </div>
                         </li>
                     {% endfor %}

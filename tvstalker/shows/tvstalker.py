@@ -49,6 +49,13 @@ class TvStalker(object):
         except:
             return {"error": "Error, please try again later..."}
 
+    def update_show_by_id(self, showid):
+        try:
+            show = self.db.get(showid, "en")
+            self.update_show(show)
+        except:
+            return "Error, please try again later..."
+
     def parse_show(self, show, user, title="", client=False):
         try:
             data = {}
@@ -110,6 +117,35 @@ class TvStalker(object):
             return data
         except:
             return {"error": "Error, please try again later..."}
+
+    def update_show(self, show):
+        try:
+            show.update()
+
+            # Get Show
+            showdb = models.Show.objects.get(showid=show.id)
+            showdb.title = show.SeriesName
+            showdb.overview = show.Overview
+            showdb.dayofweek = show.Airs_DayOfWeek
+            showdb.current = show.Status == 'Continuing'
+            if show.Rating:
+                showdb.rated = int(show.Rating)
+            posters = [b for b in show.banner_objects
+                        if b.BannerType == "poster"]
+            if len(posters) > 0:
+                showdb.poster = posters[0].banner_url
+            showdb.save()
+            # Genre
+            for genre in show.Genre:
+                genredb, gcreate = models.GenreTags.objects.get_or_create(
+                    genre=genre)
+                if gcreate:
+                    genredb.save()
+                    showdb.genre.add(genredb)
+            for season in show:
+                self.save_season(season, showdb, update=True)
+        except:
+            return "Error, please try again later..."
 
     def get_episode_info_by_date(self, showdb, data, date=None):
         ok = False
@@ -178,7 +214,7 @@ class TvStalker(object):
             shownot.save()
         return {"error": "Tv Show: '%s' couldn't be found..." % title}
 
-    def save_season(self, season, show):
+    def save_season(self, season, show, update=False):
         nro = season.season_number
         seasondb, created = models.Season.objects.get_or_create(
             showid=show.showid, nro=nro)
@@ -186,9 +222,9 @@ class TvStalker(object):
             seasondb.save()
             show.seasons.add(seasondb)
             for episode in season:
-                self.save_episode(episode, seasondb)
+                self.save_episode(episode, seasondb, update)
 
-    def save_episode(self, episode, season):
+    def save_episode(self, episode, season, update=False):
         nro = episode.EpisodeNumber
         episodedb, created = models.Episode.objects.get_or_create(
             showid=season.showid, season_nro=season.nro, nro=nro)
