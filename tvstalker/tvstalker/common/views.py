@@ -35,7 +35,6 @@ def home(request):
 
 
 @staff_member_required
-@login_required
 def update(request):
     """Update Page."""
     data = shows.get_shows_to_update()
@@ -343,7 +342,7 @@ def follow_show(request):
     return HttpResponse(data, mimetype='application/json')
 
 
-@staff_member_required
-def update_shows(request):
-    data = simplejson.dumps([True])
-    return HttpResponse(data, mimetype='application/json')
+#@staff_member_required
+#def update_shows(request):
+    #data = simplejson.dumps([True])
+    #return HttpResponse(data, mimetype='application/json')
