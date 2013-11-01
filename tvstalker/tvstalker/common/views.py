@@ -37,6 +37,9 @@ def home(request):
 @staff_member_required
 def update(request):
     """Update Page."""
+    showid = int(request.GET.get('showid', 0))
+    if showid != 0:
+        shows.update_show(showid)
     data = shows.get_shows_to_update()
     return render_response(request, 'update.html', data)
 
@@ -342,7 +345,7 @@ def follow_show(request):
     return HttpResponse(data, mimetype='application/json')
 
 
-#@staff_member_required
-#def update_shows(request):
-    #data = simplejson.dumps([True])
-    #return HttpResponse(data, mimetype='application/json')
+@staff_member_required
+def update_shows(request):
+    data = simplejson.dumps([True])
+    return HttpResponse(data, mimetype='application/json')
