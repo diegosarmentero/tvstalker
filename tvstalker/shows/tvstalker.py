@@ -228,7 +228,7 @@ class TvStalker(object):
         nro = episode.EpisodeNumber
         episodedb, created = models.Episode.objects.get_or_create(
             showid=season.showid, season_nro=season.nro, nro=nro)
-        if created:
+        if created or update:
             episodedb.name = episode.EpisodeName
             episodedb.overview = episode.Overview
             if episode.FirstAired:
