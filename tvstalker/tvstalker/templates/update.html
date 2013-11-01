@@ -1,0 +1,71 @@
+{% extends "base/base.html" %}
+{% load staticfiles %}
+{% load url from future %}
+
+{% block content %}
+<div class="main">
+    <div class="container">
+        <div class="row">
+            <div class="box-wrapper span12">
+                <div class="widget">
+                    <div class="wrapper-search">
+                        <form class="form-inline form-search border-rd4" id="form_search">
+                            {% csrf_token %}
+                            <input placeholder="Type the name of a Tv Show to follow ..." type="text" name="search" id="search_show" class="box-text"/>
+                            <a href="#" id="btn_search" class="btn-search"></a>
+                        </form>
+                    </div>
+                </div>
+            </div><!-- end box-wrapper -->
+        </div>
+        <div class="row">
+            <div class="box-wrapper  span12">
+                <div class="row">
+                    <div class="title span12">
+                        <h3 class="pull-left">Tv Shows to Update!</h3>
+                    </div><!-- end title -->
+                </div>
+                <ul id="shows_list" class="thumbnails thumbnails-horizontal">
+                    {% if shows %}
+                    {% for show in shows %}
+                        <li class="span3">
+                            <div class="thumbnail border-radius-top">
+                                <div class="bg-thumbnail-img">
+                                    <a href="/details?show={{ show.showid }}"><img class="border-radius-top" src="{{ show.poster }}"></a>
+                                </div>
+                                <h5><a href="/details?show={{ show.showid }}">{{ show.title }}</a></h5>
+                                <h5><a href="/details?show={{ show.showid }}&season={{ show.season_nro }}&episode={{ show.episode_nro }}">
+                                    Season: {{ show.season_nro }}  |  Episode: {{ show.episode_nro }}</a></h5>
+                            </div>
+                            <div class="box border-radius-bottom">
+                                <p>
+                                    <span class="title_torrent pull-left">{{ show.next }}</span>
+                                    <span class="number-view pull-right"> {{ show.airdate }}</span>
+                                </p>
+                            </div>
+                        </li>
+                    {% endfor %}
+                    {% else %}
+                    <div id="not_following" class="widget-content">
+                        <div class="hero-unit hero-unit2">
+                          <p>No Tv Shows to Update!</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </ul>
+            </div><!-- end  -->
+
+        </div><!-- row -->
+
+    </div><!-- end container -->
+</div><!-- end main -->
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script type="text/javascript" src="{% static 'js/pnotify-1.2.0/jquery.pnotify.min.js' %}"></script>
+<link href="{% static 'js/pnotify-1.2.0/jquery.pnotify.default.css' %}" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}">
+<script src="{% static 'js/actions.js' %}"></script>
+<script src="{% static 'js/index_customization.js' %}"></script>
+{% endblock scripts %}

@@ -160,6 +160,26 @@ def get_shows_per_user(user, shows_filter):
     return {'shows': shows, 'premieres': premieres}
 
 
+def get_shows_to_update():
+    results = models.Show.objects.all()
+
+    shows = []
+    for show in results:
+        if not show.current:
+            continue
+
+        if show:
+            data = {}
+            has_info = tv.get_episode_info_by_date(show, data)
+            if has_info:
+                continue
+            data['showid'] = show.showid
+            data['title'] = show.title
+            data['poster'] = show.poster
+            shows.append(data)
+    return {'shows': shows}
+
+
 def get_shows_per_user_client(user):
     results = models.UserFollowing.objects.filter(user=user)
 
