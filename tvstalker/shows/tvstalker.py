@@ -123,7 +123,7 @@ class TvStalker(object):
             show.update()
 
             # Get Show
-            showdb = models.Show.objects.get(showid=show.id)
+            showdb = models.Show.objects.get_or_create(showid=show.id)
             showdb.title = show.SeriesName
             showdb.overview = show.Overview
             showdb.dayofweek = show.Airs_DayOfWeek
