@@ -9,11 +9,7 @@
             <div class="box-wrapper span12">
                 <div class="widget">
                     <div class="wrapper-search">
-                        <form class="form-inline form-search border-rd4" id="form_search">
-                            {% csrf_token %}
-                            <input placeholder="Type the name of a Tv Show to follow ..." type="text" name="search" id="search_show" class="box-text"/>
-                            <a href="#" id="btn_search" class="btn-search"></a>
-                        </form>
+                        <a href="{% url 'guest' %}" class="btn btn-red-s6">Update All</a>
                     </div>
                 </div>
             </div><!-- end box-wrapper -->
@@ -38,10 +34,7 @@
                                     Season: {{ show.season_nro }}  |  Episode: {{ show.episode_nro }}</a></h5>
                             </div>
                             <div class="box border-radius-bottom">
-                                <p>
-                                    <span class="title_torrent pull-left">{{ show.next }}</span>
-                                    <span class="number-view pull-right"> {{ show.airdate }}</span>
-                                </p>
+                                <a href="{% url 'guest' %}" class="btn btn-red-s6">Update</a>
                             </div>
                         </li>
                     {% endfor %}
@@ -66,6 +59,6 @@
 <script type="text/javascript" src="{% static 'js/pnotify-1.2.0/jquery.pnotify.min.js' %}"></script>
 <link href="{% static 'js/pnotify-1.2.0/jquery.pnotify.default.css' %}" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}">
-<script src="{% static 'js/actions.js' %}"></script>
+<script src="{% static 'js/update.js' %}"></script>
 <script src="{% static 'js/index_customization.js' %}"></script>
 {% endblock scripts %}
