@@ -9,7 +9,7 @@
             <div class="box-wrapper span12">
                 <div class="widget">
                     <div class="wrapper-search">
-                        <a onclick="jsfunction" href="javascript:updateAll()" class="btn btn-red-s6">Update All!</a>
+                        <a href="{% url 'update' %}?updateAll=True" class="btn btn-red-s6">Update All!</a>
                     </div>
                 </div>
             </div><!-- end box-wrapper -->
@@ -59,6 +59,5 @@
 <script type="text/javascript" src="{% static 'js/pnotify-1.2.0/jquery.pnotify.min.js' %}"></script>
 <link href="{% static 'js/pnotify-1.2.0/jquery.pnotify.default.css' %}" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}">
-<script src="{% static 'js/update.js' %}"></script>
 <script src="{% static 'js/index_customization.js' %}"></script>
 {% endblock scripts %}

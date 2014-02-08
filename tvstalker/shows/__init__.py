@@ -184,6 +184,12 @@ def update_show(showid):
     tv.update_show_by_id(showid)
 
 
+def update_all():
+    results = get_shows_to_update()
+    for show in results['shows']:
+        update_show(show['showid'])
+
+
 def get_shows_per_user_client(user):
     results = models.UserFollowing.objects.filter(user=user)
 
