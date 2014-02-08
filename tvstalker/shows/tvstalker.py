@@ -9,11 +9,14 @@ TVDB_KEY = ''
 
 
 def get_key():
-    global TVDB_KEY
+    try:
+        global TVDB_KEY
 
-    keys = models.TvDbApi.objects.values_list('key', flat=True)
-    if len(keys) > 0:
-        TVDB_KEY = keys[0]
+        keys = models.TvDbApi.objects.values_list('key', flat=True)
+        if len(keys) > 0:
+            TVDB_KEY = keys[0]
+    except:
+        pass
 
 
 # SET THE KEY VALUE
@@ -123,7 +126,7 @@ class TvStalker(object):
             show.update()
 
             # Get Show
-            showdb = models.Show.objects.get_or_create(showid=show.id)
+            showdb, _ = models.Show.objects.get_or_create(showid=show.id)
             showdb.title = show.SeriesName
             showdb.overview = show.Overview
             showdb.dayofweek = show.Airs_DayOfWeek
