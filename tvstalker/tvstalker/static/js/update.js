@@ -1,4 +1,4 @@
 
 function updateAll(){
-    $.post("/rpc/", $("#form_search").serializeArray(), updateShows);
+    $.get("/update?updateAll=True");
 }

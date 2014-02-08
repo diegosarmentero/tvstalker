@@ -38,7 +38,10 @@ def home(request):
 def update(request):
     """Update Page."""
     showid = request.GET.get('showid', '')
-    if showid:
+    updateAll = request.GET.get('updateAll', False) == "True"
+    if updateAll:
+        shows.update_all()
+    elif showid:
         shows.update_show(showid)
     data = shows.get_shows_to_update()
     return render_response(request, 'update.html', data)
